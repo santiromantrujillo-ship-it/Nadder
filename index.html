@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nadder">
+  <title>Nadder House Hunt</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    :root{--teal:#1E7A8A;--teal-dark:#155E6C;--white:#fff;--gray-light:#f5f7f8;--gray:#e2e6e8;--text:#1a1a1a;--muted:#6b7280;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;background:#fff;display:flex;flex-direction:column;max-width:480px;margin:0 auto;height:100dvh;}
+    .header{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));min-height:54px;flex-shrink:0;position:relative;}
+    .hdr-title{font-size:18px;font-weight:600;position:absolute;left:50%;transform:translateX(-50%);}
+    .hdr-l{width:36px;} .hdr-r{min-width:36px;display:flex;justify-content:flex-end;}
+    .add-btn{background:#fff;color:var(--teal);border:none;border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:3px;white-space:nowrap;}
+    .search-wrap{background:var(--teal);padding:0 14px 10px;flex-shrink:0;display:none;}
+    .search-inner{position:relative;}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.65);font-size:14px;}
+    .search-input{width:100%;background:rgba(255,255,255,.18);border:none;border-radius:10px;padding:9px 12px 9px 32px;color:#fff;font-size:15px;outline:none;}
+    .search-input::placeholder{color:rgba(255,255,255,.65);}
+    .screen{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
+    .screen.active{display:flex;}
+    .map-wrap{position:relative;flex:1;min-height:0;}
+    #leaflet-map{width:100%;height:100%;}
+    .map-fab{position:absolute;top:12px;right:12px;z-index:500;background:#fff;color:var(--teal);border:none;border-radius:22px;padding:9px 16px;font-size:14px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;}
+    .bcard{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 24px;box-shadow:0 -4px 24px rgba(0,0,0,.14);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,0,1);z-index:500;cursor:pointer;}
+    .bcard.show{transform:translateY(0);}
+    .bc-title{font-size:17px;font-weight:700;color:var(--text);}
+    .bc-addr{font-size:13px;color:var(--muted);margin-top:3px;}
+    .bc-hint{font-size:12px;color:var(--teal);margin-top:8px;font-weight:500;}
+    .logo-bar{background:#fff;display:flex;align-items:center;justify-content:center;padding:10px 0 8px;flex-shrink:0;border-top:1px solid var(--gray);}
+    .logo-bar img{height:56px;object-fit:contain;}
+    .list-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+    .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);cursor:pointer;gap:12px;transition:background .12s;}
+    .hrow:active{background:var(--gray-light);}
+    .hrow-body{flex:1;}
+    .hrow-title{font-size:16px;font-weight:600;color:var(--text);}
+    .hrow-addr{font-size:13px;color:var(--muted);margin-top:2px;}
+    .hrow-dots{color:var(--muted);font-size:20px;}
+    .cal-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;}
+    .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .cal-mo{font-size:18px;font-weight:600;}
+    .cal-navs{display:flex;gap:6px;}
+    .cal-nb{width:32px;height:32px;border-radius:50%;border:1px solid var(--gray);background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+    .cal-dh{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding:4px 0;}
+    .cal-cell{min-height:58px;border:1px solid var(--gray);border-radius:5px;padding:3px 2px;background:#fff;}
+    .cal-cell.other{background:var(--gray-light);}
+    .cal-cell.today{background:rgba(30,122,138,.07);border-color:var(--teal);}
+    .cal-num{font-size:11px;color:var(--muted);margin-bottom:2px;}
+    .cal-cell.today .cal-num{color:var(--teal);font-weight:700;}
+    .cal-evt{background:var(--teal);color:#fff;border-radius:3px;font-size:9px;padding:1px 3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:flex-end;justify-content:center;}
+    .overlay.open{display:flex;}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(24px,env(safe-area-inset-bottom));}
+    .sh-handle{width:38px;height:4px;background:var(--gray);border-radius:2px;margin:12px auto 0;}
+    .sh-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--gray);}
+    .sh-title{font-size:17px;font-weight:600;}
+    .sh-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px;}
+    .sh-body{padding:18px;}
+    .det-title{font-size:22px;font-weight:700;}
+    .det-addr{font-size:14px;color:var(--muted);margin-top:4px;}
+    .det-edit{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;}
+    .det-fields{margin-top:18px;}
+    .det-row{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--gray);gap:16px;}
+    .det-lbl{font-size:15px;color:var(--muted);flex-shrink:0;}
+    .det-val{font-size:14px;color:var(--text);text-align:right;max-width:62%;}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;}
+    .badge-y{background:#e8f5e9;color:#2e7d32;} .badge-n{background:#fff3e0;color:#bf360c;}
+    .fg{margin-bottom:16px;}
+    .fl{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .fi,.fta,.fsel{width:100%;padding:11px 13px;border:1.5px solid var(--gray);border-radius:10px;font-size:15px;outline:none;font-family:inherit;color:var(--text);background:#fff;}
+    .fi:focus,.fta:focus{border-color:var(--teal);}
+    .fta{min-height:80px;resize:vertical;}
+    .save-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .tabbar{display:flex;background:#fff;border-top:1px solid var(--gray);flex-shrink:0;padding-bottom:max(0px,env(safe-area-inset-bottom));}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;gap:3px;border:none;background:none;color:var(--muted);font-size:10px;cursor:pointer;transition:color .15s;}
+    .tab.active{color:var(--teal);}
+    .tab svg{width:24px;height:24px;}
+    .tab-lbl{font-size:9px;}
+  </style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-l"></div>
+  <span class="hdr-title" id="hdr-title">Map</span>
+  <div class="hdr-r" id="hdr-action"></div>
+</div>
+<div class="search-wrap" id="search-wrap">
+  <div class="search-inner">
+    <span class="search-icon">&#128269;</span>
+    <input class="search-input" id="search-inp" placeholder="Search" type="search">
+  </div>
+</div>
+<!-- MAP -->
+<div class="screen active" id="scr-map">
+  <div class="map-wrap">
+    <div id="leaflet-map"></div>
+    <button class="map-fab" onclick="openAdd()">+ Add House!</button>
+    <div class="bcard" id="bcard" onclick="openDetail(selId)">
+      <div class="bc-title" id="bc-title"></div>
+      <div class="bc-addr" id="bc-addr"></div>
+      <div class="bc-hint">Tap to view details &#8594;</div>
+    </div>
+  </div>
+  <div class="logo-bar"><img id="logo-img" src="" alt="Nadder"></div>
+</div>
+<!-- TOUR -->
+<div class="screen" id="scr-tour">
+  <div class="cal-scroll">
+    <div class="cal-head">
+      <span class="cal-mo" id="cal-lbl"></span>
+      <div class="cal-navs">
+        <button class="cal-nb" onclick="chMonth(-1)">&#8249;</button>
+        <button class="cal-nb" onclick="chMonth(1)">&#8250;</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</div>
+<!-- HOUSE BOOK -->
+<div class="screen" id="scr-book">
+  <div class="list-scroll" id="house-list"></div>
+</div>
+<!-- DETAIL -->
+<div class="overlay" id="ov-detail">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head">
+      <span class="sh-title" id="det-sh-title"></span>
+      <button class="sh-close" onclick="closeOv('ov-detail')">&#10005;</button>
+    </div>
+    <div class="sh-body" id="det-body"></div>
+  </div>
+</div>
+<!-- FORM -->
+<div class="overlay" id="ov-form">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head">
+      <span class="sh-title" id="form-lbl">Add House</span>
+      <button class="sh-close" onclick="closeOv('ov-form')">&#10005;</button>
+    </div>
+    <div class="sh-body">
+      <input type="hidden" id="f-id">
+      <div class="fg"><label class="fl">Title</label><input class="fi" id="f-title" placeholder="Cambridge Apartments"></div>
+      <div class="fg"><label class="fl">Address</label><input class="fi" id="f-addr" placeholder="123 N Main St, Provo, UT"></div>
+      <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="f-num" type="tel" placeholder="(801) 555-0000"></div>
+      <div class="fg"><label class="fl">Price</label><input class="fi" id="f-price" placeholder="~$1,200/mo"></div>
+      <div class="fg"><label class="fl">Visited?</label>
+        <select class="fi fsel" id="f-vis">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+          <option value="Yes (Santi)">Yes (Santi)</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Location from Campus</label><input class="fi" id="f-loc" placeholder="5 min walk"></div>
+      <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="f-notes" placeholder="Any notes..."></textarea></div>
+      <div class="fg"><label class="fl">Tour Date</label><input class="fi" id="f-tour" placeholder="May 12 at 9 AM"></div>
+      <button class="save-btn" onclick="saveHouse()">Save</button>
+    </div>
+  </div>
+</div>
+<!-- TAB BAR -->
+<div class="tabbar">
+  <button class="tab active" id="tab-map" onclick="goTab('map')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span class="tab-lbl">Map</span>
+  </button>
+  <button class="tab" id="tab-tour" onclick="goTab('tour')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span class="tab-lbl">Tour Schedule</span>
+  </button>
+  <button class="tab" id="tab-book" onclick="goTab('book')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="tab-lbl">House Book</span>
+  </button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const LOGO='data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAEOAUgDASIAAhEBAxEB/8QAHQABAAICAwEBAAAAAAAAAAAAAAcIBgkBBAUCA//EAFkQAAEDAwIEAgQHCwcGCwkAAAEAAgMEBREGBxIhMUEIURMiYXEUMjd1gZGzFRdCUlZicpKhsdIjMzR0gpXBFjZDU8LTGCQnRlRlc5Sy0fAlJkRFVWSDhOH/xAAYAQEAAwEAAAAAAAAAAAAAAAAAAQIDBP/EACIRAAIDAAICAwEBAQAAAAAAAAABAgMREiETMSIyQWEzUf/aAAwDAQACEQMRAD8AuWiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCLjKIDlERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEKLD92twLNt1pSa93V4klwW0lI1wElRJjk0ezzPYIlpDeGWiRhkMYe3jAyW55488L7Wvy37wa1pd0ZNwXV4lnmAZPRnIhfTg59CBnkAOh6h2TzyQbu7ba1suvdK0t/skpMUzcSwvI9JBJ3Y8DoR9R5Eciryg4+ykbFIyZcOcGguJAA5kr5lkZFG6SRwaxoy4k4AHmqc+IzfWp1NVTaX0ZWvgsjOJlVVsyHVhB6NPaP/wAXu6xGLk8RaU1FayW90fEbpDS089ssWNQ3WPkWwSAU8Z8nS4IJ9jQfbhQJqPxFbpXeaT4NcaK0QOPqx0dO3IHtdIHEn2jCiTDWAc2+Xksp0Xt5rfWXE/TWnqmshaMmd2IovcHvw0n2A5XSq4xXZzeSUn0c1e4evquczza01AHn/V3KVg/Va4D9i9ay7ybn2gj4Jq2ulaPwastnB/XaT+1ZTSeGbdOaBskg07TEjPo5bg8uHv4YiPqJXi6h2G3Ussc00unYq+CJpc6S31ImyB+KzAefdwqdrY4zXZJG3vinr45o6TXdngkjJINbbgWlo7cUTic+0hw9ysno7VNh1fZYrxp2509wo5B8eJ3Np/Fc3q1w7tOCFraqY5aed9PURvhmYcPjeC1zT5EHmF723us9Q6D1BHetP1phLeVRTuBMVSz8V7c/Ueo7KkqU+0Wjc17NkKLENp9fWfcPSkN8tRMcnxKqle7L6eXAy0+Y7g9wsvXNmHSnoREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBEXl6pv1q01Y6m83msjpKKmYXSSPP1ADuT0AHMlAdLcDV1m0Rpiqv97qPRwQN9Rg+PM/8FjB3cf/AOnkCVQXc/Xd63E1VLfrtI6OPBZSUYdllNFnk0e3pl3c+zAHobzbk3XczVP3Qqmy0lspuJlBQl+RE08uJ2ORe7ue3QdMnCTgAkrqrr4rWctk+XSPkELNdoNxbvttqf7q0BkqKGYNZXUPFhs7Aeo8njJwfo6FTJZPDuy8bD0FSx3oNXzM+Hskd6rXNeAW07geg4QOfZxPbIVbbjR1duuNTbrhTS0tXSymKeGVuHMeOoKspRn0UcXBpmw5tTYt0Nt5xbblMbddqV0Rmp5CyWIkcwe7XDu0+48iqH7m6FvO3OpHWG9gPyC+mqWjDKmPPJzfL2tPMH6Ccj2H3SuG2uocuElVYqyQfD6QHJHLAljycB45e8DB7EXMvtg0Zufpy3VNbDTXa3ekjq6SVp8iDjPkQOFzfLIKxW1P+GvVq/pAHhp2JprrbqbWWuKVs9PMPSW+2vB4Xs7SSg9QezehHM5yALU0dNBSUsdLSwRQQRNDI442hrWNHQADkAvuNjWMa1jQ1oGAB0C+lnKTk9ZtGKisQwmERVwsRxvFtHpzcO2zPlpoqG9iPFPco4xxggHhbJj47OfQ9O2FRnVenrtpPUtZp690/oK2kcA4fgvafivae7SOYP8Aitlqr141dGU1foaPWlPG2OvtEkcU7msyZaeR4YGk9fVe8OHYAv8ANbVWY8ZjbXq1ECbA69dt7uFDc6iZ7bRWNbTXJmfVEeTiT3sJz7uId1f6N7XsDmkFpGQR3C1fSjiiczHUY96vz4Z9SO1Ns9ZqieRz6qiYaGcuOXF0Xqgk+Zbwn6VN0f0imX4SUiIsDcIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIvyq54aWnkqKiVkUMTS973uw1rRzJJ7BAfjdrjRWq3VFwuNTFS0lOwvllldwtY0dSSqMeILdas3I1B8Foy+HT1BKfgcWSDK7GPTPHmcnA7A+ZK9TxK7xya+ub9O6fqCzTVHL6zsf06RpyH/oDHqjv1PbENxMke9sUEL5ZXuDWRsBLnEnAAA6ldNVeds5rLNeI+mgAYC7+m6Nlx1PardKMx1dXFA73Oe1v+Ky3dDbS56AsGmqy8PIr7vHO+enHNtPw+j4WZ7uw457dh0ycKtFb9zL1Q3MnlSTsn/VcD/gtd1ajLGumbN4mhsbWtGABgBQp4l9mo9c25+orBG2LUlJHzYOQrYx/o3duMD4p+g8sETRRzR1FLFPE9r45GB7HNOQQRkFfqei4U3F6jta1Yav3xyxTSQVEMkEsTyx8cjeFzHA4II7HPZS74c93ajb+6i03Z75tN1kuZBkuNK89ZGjy/GaOvUc+sveJ/ZRmooZtZaUpQ29RN462ljGBWtA+MAP9IB+sBjrhVBGXDBGD3BXWmrInI062bPLfWUtfRQ1lFUR1FPMwPiljcHNe0jIII6hfuqXeGneeTRtbDpjUtVnTtQ8iGZ5/oLyepJPKMkknyPPzVzoZGSxtkjeHscAWuByCPNc0ouLw6oSUkfaIiqWCxndakjrts9TUkrQ5klqqQQf+ydj9qyZYD4hb/DpvZvUtxmzl9G6ljA6l8xETf2vBPsBUr2Q/Rr7b8UZVvPAxUPk0HfqZ3xIbrxN/tRMz+5VE7YVx/BHbn0u2Nwr3tIFddJHMPm1jGM/eHD6F0XfU5qvsT0iIuY6giIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIhPLKA4e4NaXEgADJJVO/FHvO7U1TPorSlY5tliPDXVcZ/pjh+A0/6sHr+Mfzfjez4qt6RVOqdA6Rqz6H1ortXQvGHHoYGH6w4+zh81WZoDQBnthdFVf6znts/EHHhB588Z5q3Hhd2VZZYqfW+rKRrrrK0PoKWRv9FaRye4H/SEdB+CPaeXheFfZcVBpde6rpeKItEtropo8cXcTPB7d2j+15K1IGAAOyi2zekTVXnbIT8ZOmjedpjdYWuM1lq46s8I6xkGN+fYOMOP6CpREQ9odyIcFs4vluprvZqy1VsYkpqyB8EzT3Y9paR9RWt/Wmm6vR2rLhpev4jPb5TGHObj0jOrH+5zS130q1EusK3R70ut4VdWN1Rs9a2SvBrbU34BUNLsn1Bhjj72cJ9+VKyoT4bNwRoDcOI10nDZro1tLXE9Izxfycv9klwPsc4q+kb2vYHMcHNIyCOhCxsjxZrXLlE5IB6qr/in2Wa5tTr3SNGGyMBkulHGPjjq6Zg8+7gOuMjnnNoV8vaHNLXAEHqD3URk4vUWlFSWM1e8jjzVivC3vQ6yTU2htXVpdbXkMt1bKeVKeQELjj4h7En1enTHD+fim2Y+4ElRrnStLi0uy+40cbeVKe8rQP8ARnuPwTz6fFry4BzC0nqMFdXxsicvyrkbQ2kEAgggrlVh8Le9gm+DaE1fVYlaGxWuvld/O9hC8n8LoGnv064zZqomZDTSTvDuCNheeFpccAZ5Acz7guSUXF4zqjJSWn2ThU98YG5sGoru3QtkqPSUNtl9JXzRnLJZxlojB7hnPP5x9i/Te/xIVd9iqtOaGiqrfQvYWTXOQFk8gzgtjaRmMEfhH1ufRuMmvTfVaS4k+ZK2rrx6zGyxNYj9GxTTYgp43TTyHgijbzc9x5BoHck8lsX2n0yNH7e2bTxDPS0lMBOW9HSu9Z5H9olVr8Im19Rdr3Fr290xba6M5tscjf5+Yf6TB/Bb2Pdw/NVvRyUXT14TTDO2ERFibhERAEREAREQBERAEREAREQBERAEREAREQBEQoAq4eKfeg2Wnm0RpOr/APac7Sy4VkL8GkYR8RjgeUh8x8Ue0jHteJveeLRltk03puqik1JUjgke1wPwFjhniI5/yhBHC0/pHsDS4lz3ukkJfI9xe955lzickk+eVtVXvbMLLM6QjaGtA58u5OVP3he2Ydqirh1nqilc2yQPzR0krf6a8H47h/qwR/aPsHPxvDds7JuBdG32+RSw6ao5efPhNbID/Nt/MHPiP0Dnki7lJTwUlNHTU0TIYYmhkcbG4a1oGAAOwVrbPxFaq97Z9sY1jWtY0NaBgADAAX0iLnOkKvXjC20+7li/y5s9K590tcJbWNjbl01MMnPtLOZ9xd5AKwq4e1rmlrgC0jBBHIqVLi9IlHksNXmA5hB55CtN4Td3xJFTbfalqGsfE0R2mpe4+uOf8g7yIAHCT1Hq9QM4R4ntn5NF3afVmnqV79OVkg9NEwcqCUnpjtG4nl5Hl+KoSBIcHtJa5pBa4HBBHQgrqaVkTkTdcjaCD7Vyq2eHTf2G5im0nritZFcMthoa9/JtRy5MkPQP5cnHAdyHXrZMHK5pRcXjOqMlJaj4mijmifFLG2SN4Ic1wyCPIhUt8TOzk2i7lLqjTtNJJpyqePSwxtz8BkJxjH+rJPI9unlm6q/CvpKWvo5qOtp4qimmYY5YpGhzXtIwQQeRCQk4vUROCkjWFyyMOcCDkEHGCrf+F/en/KSCLR2q6kNvMTeGhqZHc61gHxXH/WAfrAZ6gqF/EPtFVbcXv7o2xk1RpqvmIp5XOyaWQ5PoXezl6p7jkeYyYrp5JIKmKqp5HxTwvbJHIx2HMc05BBHQg910tKyJzJutloPFBsgZX1WutGULnTEF9xttNEP5Qk5M0YHV3dzR16jnnPg7GeHW43mamv8AryGWgtgHGy2O9Wao8vSY/m2+z4x78PeVfDbvJBru1MsV+mih1NTNLSOgrGNH84387A9YD3jlyE1ALFzlFcWbqEZPkfhQ0lNRUcNHSU8dPTwsDIoo2hrWNAwAAOQAX7oiyNQiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgBUR+Ird6j26sJorfJHPqSsZilgI4hA05/lZBn4owcDufYCR6u++6dt2z0yalzWVd4qQW0FFnm893uxzDG55+fTuqH6gvNz1DfKy+Xmskq66sf6SaR+Bz8gByAHQAcgAFrXXy7foyss49I6tbU1NbW1NwuFTJU1VRKZZppTlz3HqST3UlbAbT125N/9NVsfT6copGmsqQcGUjn6FntPc/gg+ZC8rZjbe6blaobbacvp7ZDh9fWcJxEzPxWnGC89h7z0CuVqm+6P2V22iDYG09FSM9DQ0cRzJUy46DPMuJ5ucfaStLJ50jKuG/Jmb2a3UNotdNbLbSxUtJTRiOGKNuGsaOQAXbUWeGbWF311oKs1Jen/wDGam6ThsbQQ2FjeENY0HsAPpOT3UprnaxnSu0ERFBIREQH4XCjpq+imoq2COopp2GOWKRoc17SMEEHqCFSjxC7JV2g6ua/acp5KrTEjuJ3rF8lCT1a/OSWeT8+x3Pm67y/OogiqIXwTxslikaWvY9oLXA8iCD1CtGbi9RSUFJYavwWvbkYKsDsP4hKvThg0/rqonrrUSGU9fwl81MOwf3ez283D2jp39//AA9VFtfUal2/pTLQ+tLVWpjS6SI8yXQ9y38zmR2yOQrgHdncnDII8j0K6vjYjm+VbNnNquFDdbdBcLdVw1dJUMD4poXhzHtPcEdV2lr/ANm92dR7bXJrKeZ9dZJX8VRb5D6v6TDj1HfsPcdCLs7c640/rzT8d4sFWJWHAmgfylp3fivb2P7D1GRzXNOtwOiFikexqG0W6/WWrs92pWVVFVxOimif0c0jB5jmD7RzHUKh++G1lz2z1H6NjX1Nhq3vdRVmOnf0b+weOf6QGR3Av+F5GsNOWnVenqux3qlbUUdUwtcD1aezmns4HmCkJuLE4KSNbtquFdarpS3W1Vb6StpZBLBPH8Zjh3/9deivL4fN2qLcewCCrMdNqGjjHwymHISDp6Vn5p7j8EnHkTUPd3by77bapdabh/LUMrTJQ1obhs8YOPcHDIyO3I9CFj2mr9dtNX+kv9jrH0lfSO4o3t5gju1w/CaRyIXROKmtRhCTg8ZsxCLAdktyrbuTpRtxp2inuNPiOvoy71oXkdR3LD2PsI6grPlytYdSaa1BERQSEREAREQBERAEREAREQBERAEREAREQBYtufrKj0PpSpvVTBNVzNHBTUsLC588h6NGOg7k9gFlK4IB6oGa3NaXXVmstS1Go9QUlylragAFopZAyJo6MYMcmj/zJySSu5txt9qLW+poLHb6Cppw/wBaepmgc1kEeRl5zjPXkBzK2L8I8gmB5LbzNLEjDw69bMHttv0vs/tnM+ngdFb7ZAZqiRjA6Wof0Lj5uccDyHIcgOVHt1tdXjcbVTr5dy6KKPLKOja7LKaP8UHuT1J7n2AAXT8SxxshqUj/AKOz7VioDknqrUre2VuefFF0/BP8jb/nSo/e1TkoN8E/yNP+dKj97VOSxl7ZvD6oIiKpY4Lmg4JH1pxt/GH1qqm6+mtS7jeJms01ZbxX22joqKF9ZURTPEcLOBp6AgFxLwAOpwT0BXa3s2dtuhtq7rqS26s1dUV9E2Is+EXIlh4pGtPIAdie6vw9LSnP30Wh42/jD61xxt/GH1qg2w1rqddbl0mmrxqK/wANJNSzTOdT172vywNxzJI7+SkjfjZG76T0jVan0nrDUdXT0TfSVdJVVj3PEeRl7HNx0GSQR0yQeWDLrx42QrG1uFs+RChDfrYe3a2jlvem3U9r1A1rnO9TENWcE4fj4rifw8H2g9RnuyFTNWbO6PqKiV8sz7NS+kfI4uc53omgkk8yc5WZFUTcX0WaUl2ay9R2a7acvU9kvlBPQ19P/ORyNxyyQCD0IOORBwV39Caw1BojUMV809VvhqGcpIjzjnZ3Y9vcH6x2IV6N49r7DuTYXUle0UlyiYfgVxjZmSB2OWenEzPVpOD7DgijW4Gj73obVNTp+90xZLEeKKZo/k54z8V7D3H7jkLqhNTWM5pwcHqL17Pbj2bcbTbbjbyIK2ENbXUTnAvgeR+1pwcO74PcELNxzWt/bvWN30Jqun1DZpP5WMhk8JdhlRFn1mO9h7HseYWwbRGpbZq7TFDqC0TCSlq4w8DI4mO/CY7yc05BHmFhZDi/4b1z5I6m5GjLPrrStVYLzGTFKMxSt5PhkHxXtPmD26EZByCVr+19pa6aJ1fXaZvDMVFKQWSAYbNGc8EjfYQPoOQeYK2TKvHjd0pBW6FpdYxD0dXaJ2wyuA+PDK4MAPueWY8su81NU+Lwi2GrSv2xGuHbf7kUd4mle221AFLcWh3q+hJ+OR5sOHefIjutgzHB7Q4HIIyCtXczeOF7MA5aRg9Ctgfhz1C/Uuz1hrZpHSVEMHwSdzjkl8R4Mk+ZAB+lWuj+lKZfhIaIiwOgIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiICN/Ex8h+pv6uz7VioF5K/viZ+Q7Uv/YR/asVBBjhC6aPTOa77F0fBP8AI2/50qP9lTkoP8FPyNv+dKj97VOCwl9mbw+qCIiqWPGtWmrNbNQ3bUFHSmO43f0Xw2YyOd6T0beFnInDcDywsD8WfPYHUv6EP2zFKqivxZfIHqX9CL7ZitH7IrJfFlavCB8vFt+bqv8AcxXhuNHT3C3VNBWRCWmqYnRSsPRzHDBH0gqj3hA+Xm3fN1X+5ivT2V7vsUp+p0NP2igsNlpLNa4PQUVJGIoI+Iu4GjoMnmu+o03/AN06bbHTUFRHTtq7vcHuioKdxPDkDLnvxz4W8uQ5kkDl1FVZvEBu3NdW1zdTthjDs/BWUMPoceXNpd+1VjXKXaLSmovGX1Ud77baUG4+kX0ZbHDd6UGW3VZGCx/djj14HYAI9x6gLxvDju83cq1VFHdIoaW/0ABqI4shk0ZOBIwEkgZ5EZODjzCl3Cr3Fk9SRrAqqapo62ooayF8FRTSuhmjeObXtOHA+45U/eC/XEtp1XVaKrZs0N1zNRgu/m52NyQPY5oP0tHmV0fGbpOCwbhUeoKOItiv8bnTAD1RPGGtcfZlpZ7yHHzUMWO5TWW/2y805cJaGsiqW8PU8Dg7H04wurqcTl+kjZssI35t9Pc9ndVUlUxr4/udLKA4dHxjjY73hzWn6Fl1qrIbjbKW4Uz+OCphZNG4d2uaCD9RUdeKK8my7G6jnYOKWphZRsGcfzsjWOP0Nc4/QuVLWdUn0UKHMK5Pghmc/a24xOJxFd5A32AxRFU3HIK6fgsoJKXaGSqeMCtuU0zPa0Bkf72FdNz+JzU/Ym9ERcp1hERAEREAREQBERAEREAREQBERAEREAREQBERARx4l/kP1L/V2fasVAvwVf7xLfIfqX+rs+1YqA45BdNHpnLd9i6fgp+Rtx/60qP9lTioO8FPyNvH/WlR/gpxWEvbOiH1QREVSwUUeLWWOPYXULXuAdIIWMGebj6VnIfQCfoUrqJty9i7Hr++y3S+ao1QGvIMVJFVs+DweqAeBjmHhzw5PtJVo5vZWW50Vs8Is8UO+9q9I8N9LRVUbM93FoIH1NP1K9YUAw+FPQ0NTFUxai1THNC4PjkZUxNcxwOQQRHkEEZypt0xaTY7FSWo3GuuXwZnB8JrZPSTSc+rnADJ+hWskpPUVri4rGVb8edBVt1JpO6u4nUZhngaccmSDDj9YI/VVcxg8weRWyTXmkbFrbT01j1BRippJDxNIPC+N46PY4c2uGeo9o6EqAZPCTRC4Aw64rW0Idn0bqJhlxnpxZx9PD9C0rtSWMznW29RhfgopKufdirrYGyfBaa1yNneG+rl72cLSfMlpI/RKugsU2y0DYNvrALRYYX4e7jnqJXcUs7+nE49PoAAHYLK1jOXJ6a1x4rCA/HDSRTbWW2qc0GSnvEXAe4Do5Af8FTkjLVcXxw1kMO11spHOAlqbxFwtzzIbHISf3fWqdjHD7F0U/U57vsbD9kKs1u0OlJ3dfuVAz9Vgb/gq9+NXXLLjeKXQNDI/wBFQFtVXOaeTpXAhjP7LSSf0m+Syq9btW3bHY/TNmtb4q3U89lp3Q02QRTB8YPpZfIDPJvVx8hkiptVUVFZW1FfWzPnq6mR0s8zzl0j3Elzj7SSSq1w+Wl7J/FI+HRzSN9FTxukmf6sbGjm5x6Ae0rY5tfp0aT0BZdPHhMlHSNZMW9HSHm8j3uJKqn4Q9vpdSa1/wArLjTu+49oLXQcbPVmqurQPPgBDj7eH2q6IVbpa8Jpji0IiLE3CIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAjjxLn/kP1L/ANhH9qxUEGMK/fiX+Q/Uv9XZ9qxUEb0XTR6Oa77F0fBV8jb/AJ0qP3tU4rXTpHczcHSFoNp0zqR1voPSul9EKSKT1ndTlzSV7I313iP/AD3f/d9P/AqypbZaNqSwv6ioEN9d4fy1f/d9P/Ah313h/LV/930/8CjwyJ8yL+5RUDbvtvCOutXn/wDQp/4Fyd9t4Py1d/d9P/AnhkPNEv2ioGN9t4B/z1f/AHfT/wAC5+/tvB+Wj/7vp/4E8Eh5kX7TKoH9/beH8tXf3fT/AMCff23h/LV/930/8CeCQ8y/4X8X4V1XTUVLLV1lRFT08TS+SWV4axjR1JJ5AKhP39t4c/56v/u+n/gWOas17rfVrGxam1LW3GFpyISRHF7yxuGk+3CeCQdyMv8AE3uPSbi64gFpcJLPZw6GjlOf5ZziDJIB2B4Wgexue+FFy+eEN6DC5BycAZK6YpJYjnb5PTmVxfK6aRxfK7AL3HJP0rM9oduL3uPqNltoIpYbfGc1teW+pTt8va89m/SeQKzHZ/w/6n1hNFcdSQTWGx8XEDIMVFQ38xhHqj8530A9VcXR2mLJpGwwWTT9BFRUUA9VjOrj3c49XOPcnmsbLUukaQqb7Z9aO05atKabo7BZqcQUVJHwMHUuPUuce7icknzK9dEXMdQREQBERAEREAREQBERAEREAREQBERAEREAREQBERAYNv1aLnfdpb9arPSPq6+ohaIYWEAvIkaSBkgdAVTH7y+7A/5k1/68X+8WwfCK8LHFYjOdak9NfP3md1/yJr/14v41z95ndj8ia8f24v41sFwPJFfzyK+FGvr7zG6/5FV/60X8afeZ3Y/Imv8A1ov94tguEwE88h4Ua+zsxuv+RNf+tF/GuPvM7rfkVX/rRfxrYKieeQ8KNff3md1vyKr/ANeL+NcfeZ3X/Iqv/Xi/jWwXl7E5J55Dwo19feZ3X/Iqv/Xi/jXH3l92PyJrx/bi/wB4tg2AmE88h4Ua+vvLbsfkVX/rw/7xehatgN3K+UNfpplCw/6Sqq4QPqa9x/Yr6pyCh3SHhiVH0p4VNQzyB+qdR0FHFnnFQRume7+0/hA+oqdNu9mdA6JdHUW6zR1dxZ/8fWgSzZ8wSMM/sgKROXmiq5yl7LqEV6AACIioXCIiAIiIAiIgCIiAIiIAiIgCIiAIiIDhxwMqq188UeoLde66gj0nbZI6apkhDnVLwXBriMnl7Fal3xT7lrV1h/ndef6/P9o5a1RUt0ytk4+jYNtrrO0a80lS6gs8h9HKOGWJ3x4JB8Zjh5g/WCCORCyVa/tj9ya/bbVTayNrp7RVODLjSg4425+O389vMjz6HGci+dhu1vvlnpbva6plTRVcQlhlYeTmn/10VZw4stCfJHePRVt3R8Rt70huDeNM02maCqht8zY2zSVDw5+WNdkgD85WSPRa/fEb8umrP62z7GNTUk32RbJxXRcrY7W1TuDt5SanrKGGhmnmmidDE8uaPRyOZnJ88ZWcKHPBv8hdv/rtZ9u9THkKsljaLx7QRYrqjcXQ2mZXQ33VVqoZ2dYX1DTKP7A9b9ixeHxBbSS1AhGrI2knHE+lma39Yswo4tjkl+kpIvF0xqvTWp6d0+nr5QXRjfj/AAadry33gcx9K9rKgkIi6N7vFpslC6uvNypLfSt5OmqZmxsH0uICA7yKLa3xA7SUtWKZ+roZHE44oaeWRn6zWkftWYaR1xpHVrHHTmorfcnNGXxwzAyNHmW9R9IUuLI5JlK9wtytfUe4WpaSl1feYaeC5VEcUTKpwaxoleAAM8gAArkbLV1Zc9pNJ3G4VMlVWVNnppp5pDl0j3RNJcT3JKoZud8pmrPnWq+2er1bBfIlor5jpPsmra1fFGNTbbM3RMrG9Xa70dpLhbqPUdttsjm8TYppwJHDzDPjH6lh7N/RkiwXf65V9o2h1BcrZVy0dZBA0xTRO4XMJkaOR9xK8ij8QO0lVV/BmatiY78eamljZ+s5oH7Vxv3drXe9gdRV9nuFLcKSSnZwTU8okY7+VZ3HJWSaa0q2muit2zG4murnutpqguGrLvU0s9exksMtS5zXtPYjuFeMLXpsN8suk/nKP/FbC1e5dmdXoIuCQBknAWC6k3f2109PJT3LV9tE8Zw+GGT0z2nuC1mSD7Fmk2atpGdoo4se+W1d4lEVNrGihe7kBVtfT5+mQNCkSCaKeFs0MjJI3jLXsOQR5go017Cafo+0RYjqjczQel7u603/AFPQ26uaxshhmcQ4NPQ9O6JN+ifRlyLx7FqewXywi/Wq601Tazxf8aa7Efqkh3M9MEH6li0m9G2IvdNZ4tW0VVWVM7IIm0wdK10jnBrRxNBb1I7pjI1EgoiKCQiIgCIiAIiIAiIgOHfFPuWtXWX+dt5x/wBPn+0ctlTvin3LWrrH/O28/wBfn+0ct6PbML/SMu3Q21q9L6a0/q2ibJPZbvQ073u5k087owXNcfxXHJafbjsM5P4Y93HaKuzNM32o/wDd2tl9R7ulHK4/H/QcccXYfG882a0JZbZqLZCxWW8UrKqhq7LBHLE/uDGOY8iOoI5g4KpjvTt3cdudXTWypL5rbUEyW+rI/nY/I9uNuQCPcehVoy5/FlZRcMkjYQ1zXxhzSC0jIIPIrX/4jPl01Z/W2fYxqZfCfu8JGU+32parEjAGWmpkPxhjlA49iMeqT1+L1xmG/EWM756sP/3bPsY1WuLjJpk2S5RTLPeDj5C7f/Xaz7d673ikGrWbUVtbpK51FFLSPbLWtpwRLLT9Hhrh6zcZDiR2BHddHwb/ACF27+u1n271LtbNTQUss1XJFHAxhdI+UgMa0DmSTyws5PJGqWxKFaJ2U3H1hTNuNJaGUlNOS4VNxl9CH8/jcOC857HhwfNZbdvC/r+lozNR1tjr5AMmFsz43H2NLm4z7yB7VNmo/EZtnZqiSlp6ytuskTuB3wGnLmZHk5xDXD2gkLwT4rND55af1If/AMMP+8WinZ+Iz41r2yrUcup9CatIjlqrJfLdNh4acPaQQcHs5pGD3Dge4KvXsXrobhbe0l9ljZFWtc6nrY2dGysxkj2OBDgO3Fjsqh+IbXmntxNWUV9sVtraJ8dJ6CoNUxjXSEOJafVcc4Bwpg8CNRIbLqijLj6KOoglaPznNe0n6mN+pTYtjr9la3ksRN+6Gs7doLRlbqS5NdIyABkULT600rjhrB7yeZ7AE9lQrXmstUbhaiNdeKiatnkfw0tHE0lkQJw1kbB3545DJ7kqdvHbdaj0mmLEyZzac+mq5GDo5wLWMJ9wL/rXk+CfS9HctWXjUlZC2V9rijjpOIAhr5OLid7w1uB+kVEEox5FptylxMc0/wCGzcq50YqqiK02sOaCyKrqT6Q+8Ma4D6Tn2LHdW7f7i7U19Le6uA0XopQILlQTl8Ydy5cQALc9MOAzzHNbAV52pLNb9QWSss10p2VFHWQuhljcOrSMfX5HsVVXP9LOlZ0a2LrXVF0uVbdKxwfU1cr55nAYBe4lxOO3MlbAdgvkS0V8x0n2TVQTUdsksmoLrZZX8b6Cplpi7GOLgc5ufpxlX62E+RHRfzHSfZNV7vSKU+2YT4ot3J9BWyCw2CRov9xYXiUgO+Cw5xx4IILiQQ3PkT2wakabsOqtfakNJbKervd0my+aSSQuOO7pJHHAHtcf2r3fEDdqi87x6mqKiRzxT1zqSIHoxkXqAD2ZBPvJVqvCZpahsG09DcomZrbzmrqJTgkgkhjR5NDQDjzJPdP84b+kZzln4QQfDFuQLcKgTWA1I5mmFW/OP0vR4z+z2qO7vFrTb+quulrmyrtba6ER1dI85iqGEgh4x6rsEDDm5xgjPULYyoZ8XmlKK+bVVN4MbG19meyogm4RxcBe1r2Z64IOcebW+SrG1t4y0qklqKtbDfLLpT5yj/xWwonAyVr12H+WXSnzlH/irtb1XaWybT6luVPI+KaO3yNikY7DmPeOBpB7EFwIS7uSQqeRZWLxH723XUV7rdK6XrZaKxUr3QTyxEtfWPacOPF1EeQQAD6w5nIIAx3bDYjW+tbdBdWRUtptMzeKKorCQ6RvYsjAyQexOARgjKj7Rr7PDqW1S6gbK60x1Eb6xsTONzowcloHfPT6Vb+LxN7aRRNiipb4xjAGta2iaAAOw9ZaPYrIopHJPZMhnW/hu11YLe+vtslFfIomF8kdNxNmAAzyYR63uBz5Arw9kN273t1eoqepqJqvT0kgZVUT3F3oRnBkj/FcOuByd0PPBFhP+E9tx/0e+/8Ac2/xKsG9F40xqHcGuvmkoamCgruGaSOeMRlsxyH4AJ5HAd73FRHlLqSElGPcWbCaKpp6yjhq6WZk1PNGJIpGOy17SMgg9wQqQ+MMf8udWMf/AC6m/wBpWK8Jd3qLrspa2VTy+ShlmpM/mNkJYPoYWj6FXbxi/LnVfN1N/trOtZPDSx7DTBjqXUl20nZ9AUBqZKGmkldHQ0zC59VK+R0hJa0ZfjOAOeMZ6qQNC7Fbn0+qLFdqrT0dPS09wpqiUvrIuJrGyNc48IcTnAPLqpA8D+laB9uu2saiESVon+BUznNB9EwMa55b7TxAH9H2lWcVp2cXiIhXq1gdERFgbhERAEREAREQBERAcO+Kfctausf87rz84T/aOWyp3Q+5a1dYf53Xn5wn+0ct6PbMLvw2AbP/ACWaX+aqf7Nq43U0NaNwNJ1FiujA1x/lKWoAy+nlA9V4/cR3BI7rnaA/8lul/mqn+zasrWLbT1GqWo1r6w09eNHapqbJdY301fRTZY9hI4gDlkjHeR5EH9xC6+obxcNQXuovN1m9PXVPCZpcY4y1jWcRA7kNBPtz0V2/ERtVTbh6cFVRMbFqC3sc6jl5D0w6mF58j2PY8+mQaNVNNPR1U1JVwyQVEEjo5Y5BhzHNOCCOxBC6oS5HLZFxf8LreDj5C7f/AFys+3esA8busa+Ke2aIo5ZYKeaEVtYWPLRKC4tjYcdQCxxIPLPD5KQPBz8hlv8AbWVf271hnjU0JX3Gmodb2umlqRRQmmr2M5lkXEXMkx5AucDj8YHoCVis8nZu98fRG/ht2fotyBcbnerhU09soZBAI6YgSSSkB3xiDhoBHbnnthToPDPtqAPUu59prT/5KuGx27d02yrapkNDDcrVWkOnpnSFjg4DAex2Dg45HIOeSlm++K7NtkbZNIcNa5pDH1dXxRsd2Ja1oLh7Mj3hXmrN6M4OGdkb+JrQendv9UWm2ae+EBlRRumnE03pHZ48D3DkVJngQ/omq/0qX90qrxre66k1LdG6t1L6WSa6ukEE5ZwxvbHwhzYx+K3jaPfnmTlWI8CP9E1WfzqX90qmSyBEPudDx3W2dtbpi9BjjTlk1I9+OTX5a5o95HH+qV0PBFqWkodVXrTlVKI5LlDHNS8RAD3x8XE0e3hdnHk0qxm7eiKHcDRFZp2tkMLnlstNO0c4ZmnLXe7sR3BIVCNU6f1HoPVjrfc4ai23OklEkEzHFvEGn1ZY3DqOXIj6cHIVYPlHiWmnGXI2SZXRvt1obJZ6u7XOoZT0dHC6aaRxwGtaMlU9sHie3Ct9G2mr7fZbtwRhrZ5Y3xyuPm4tPCfoaFh+4O6Wvtz3U1nuT4vQSyBkdutsTmsmkJHDlpLnOOcYBJ59AFXwv9LO6OdGHamujr5qW73t0fojX1UtTwfi8b3Ox9GcK/OwnyJaL+Y6T7JqoFebbV2e61lpr4hDV0cjop4w4HgeMgjI5HB8lf7YT5EtFfMdJ9k1XuXxRWn2yle/lrntG8WqKadjm+luElSwkcnNlPpAR+tj3gq2PhR1LR33aC20cUg+FWjNFUR9C3hJLD7QWFvP3jqCvA8Vu01ZrKip9Uacg9NerfH6OanacOqockgD85pJIHcE98Kq+iNWam0Hf3XGxVM1vrGH0dTBI31XgE5ZIw9cc+vMdsJ/pBEf5y02QqHvFzqakse0lXbXPa6su8jKaCLiHFw8Qc92PINH1keahY+KfcL4D6L7iab+E5/n/RTYx+h6Tr7c/Qoyv1x1nuVerhe7k+ouUlFSyVM8mMQ0kLAXYA6MHkB1J78yqxqaestK1NYjubDc95dKfOUf+Kuzvba5bxtLqaggjfJK+3yPjYxpc5zmDjAAHUktwqS7DnG8mlPnKNbC3AObg9ClzySYpWpmsvTDbXJfLcy9mZtrfOwVbonYe2InDnNODzA59OeMK3VL4ZNt6qmiqqa63yaGVgfHIyqjLXNIyCDwcxhRP4kdmrjpW+Vmp9PUU1Vp6pe6eVkQ4jRPJy4EdeDJJB6NHI4ABOL7bb1680Lb22211VJX25n83S3BjpGRDyYWkOaPZnA8leWzWxZSOQeSRYX/AILm33/1HUH/AHmP/dr5/wCDFt0ZfQi6X30gHEWfCos488cHRRndvFRraopmx27T9joZDyfK90kx/sjLQD78rDNstSboX3dmnvthqKu7X+VwbUGVx9Cacu5tlxgNiGc4GMHHDzwqcZ52y/KG4kXO2z0PaNAaeNjsstVLTOndOXVDw5/E7APMADHIdlUXxjfLlU/NtN/tq8MZcWAuADsc8eao94xvlzqfm2m/21FT2Za3qBOHgox96Cb5zl/8EanNQb4KhjaKf50l/wDBGpyVJ/Zlq/qgiIqlwiIgCIiAIiIAiIgOCMqNazYra6rq5quo0wHzTSOkkd8LmGXE5J+P5lSWilNr0Q0n7OpZ7dSWi1UtsoIvQ0lLE2GGPJPCxowBk8zy8120RQSCsF1TtHt9qe9TXm9adhqK6YD0srZZIy/AwCQ1wBOMDPXkFnSKU8Ia08fR+mbLpKyR2WwUQo6CN7nsiD3Ow5zi5xy4k8ySV67mhzSCAQeq5RQThGmpdi9sr/UyVVVpuOmmkcXPdRzPg4iepwwgZPuXVsvh82stdR6ZunnVhyDw1lVJMz6Wudgj2EKVUU8n60rxX/DENZ7a6L1gy3s1BZI6pluY6OkayV8Qia7hyAGEcvUb9S7OhNB6W0RHVR6ZtYoG1ZaZsSvfx8OeH4xPTiKyZE15hOLdC8jVGmbDqeg+AX+00lxps8TWTxB3C7zGeh9o5r10UEkQVXhv2pnqDN9x62LJzwR3CYN+riWYaJ220Xo2QzaesFNS1BbwmodmSYjuON2XY9mcLL0UuTf6V4pfhHd52U21vF3q7tcdONmrKyV0s8nwqYcb3HJOA7AWbWK1UNjs1HZ7XAKehooWwU8QcTwRtGGtyefIDuu8ia2SkkCsO1rtlojWUxqNQafpamq4eH4QzMcuOw42kEgeRKzFFHoYRBSeG/aqnqRN9xq2XH4ElwmLfq4lnlJojStJpWp0tSWSlprRVRuinpoW8Aka4YdkjmSfPOVkaKW2wopEe2LZfbex3iku9r042nraSQSwSfCpXcDh0OC4hSEERQ237CSXo4c0OGCMhR3qXZLbO/1E1TWaXpoZ5nF8klI51OXOJyXHgIBJPMnqpFRSm16DSZEVD4ctqqWcS/cWrnx+DLcJnNP0cSkjTOnLHpq3i32G1UlupgeIx08QYCe5OOp9p5r1URyb9hRS9BYPrDafQWrr269ahsTayvdG2Iy/CJGEtbnAw1wHcrOEUJ56DSfs8PRek7Do60m1adoBRUZlMpjEjn5cQATlxJ7Be4iISEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAf/Z';
+const DEFAULT=[
+  {id:1,title:'Cambridge Apartments',address:'1425 N University Ave, Provo, UT 84604',number:'(801) 342-4999',price:'$1,500+',visited:'Yes',location:'',notes:"Really clean, and close to Santi's job. Close to campus. Outside of our budget due to hidden fees",tour:'',lat:null,lng:null},
+  {id:2,title:'The Ashton/Devon, Orem',address:'730 E 950 S, Orem, UT 84097',number:'(385) 304-3721',price:'$1,450+',visited:'Yes',location:'',notes:'Really clean, actual nice place to live. Location is far and outside of our budget rn',tour:'',lat:null,lng:null},
+  {id:3,title:'Moon Apartments',address:'330 E 700 N, Provo, UT 84606',number:'N/A',price:'$1,400+',visited:'Yes',location:'',notes:"I don't exactly remember the price, but cheaper than the others. Close to campus. Santi liked it, could be cleaner though",tour:'',lat:null,lng:null},
+  {id:4,title:'The Station, Provo',address:'77 W 500 S, Provo, UT 84601',number:'(385) 217-5204',price:'?',visited:'No',location:'',notes:"Don't think we've been here. If I remember, it was an expensive studio apartment",tour:'',lat:null,lng:null},
+  {id:5,title:'A House in Provo',address:'140 E 300 S, Provo, UT',number:'NEED THIS',price:'?',visited:'No',location:'',notes:"Don't know alot about here. It's a house in Provo",tour:'',lat:null,lng:null},
+  {id:6,title:'Jake and Kindrie Palmer',address:'560 E 400 N, Provo, UT',number:'480-521-1111',price:'$600!!',visited:'Yes (Santi)',location:'Half a mile from campus',notes:'Super good price ($500!). Not far from campus. Kindrie will let us know if there are openings',tour:'',lat:null,lng:null},
+  {id:7,title:'Ayralyn Knight Housing',address:'476 N 300 E, Provo, UT',number:'801-897-6809 / 816-456-0564',price:'~$1,200 w/ utilities',visited:'No',location:'Walking distance from BYU',notes:"Email and call has been made. Waiting on reply",tour:'',lat:null,lng:null},
+  {id:8,title:'Harmony Square',address:'915 N 150 E, Provo, UT 84604',number:'(385) 241-7670',price:'~$1,300',visited:'No',location:'',notes:'Amazing Location! Best location close to Campus. Ian Livingston from my ward will live there.',tour:'',lat:null,lng:null},
+  {id:9,title:'The Freehand',address:'1555 N Canyon Rd, Provo, UT 84604',number:'801-923-7629',price:'',visited:'No',location:'',notes:"Close to campus, might be more expensive than we hope. Near the stadium, might be a far walk from Nat and Santi's classes.",tour:'May 13 at 9 AM',lat:null,lng:null},
+  {id:10,title:'Monaco Court',address:'485 S State St Unit 206, Provo, UT 84606',number:'(801) 375-8154',price:'',visited:'No',location:'',notes:'4 min driving to BYU, 7 to OIT Office. About 30 min walk. Car is necessary',tour:'',lat:null,lng:null},
+  {id:11,title:'The Branbury',address:'449 W 1720 N, Provo, UT 84604',number:'801-416-3198',price:'',visited:'No',location:'',notes:'Set up a tour.',tour:'May 15 at 3 PM',lat:null,lng:null},
+  {id:12,title:"Gabbi's Basement",address:'1280 N 1750 W, Provo, UT',number:'',price:'~$1,200',visited:'No',location:'',notes:'',tour:'',lat:null,lng:null},
+  {id:13,title:'Wymount/WyView',address:'1990 N 66 W, Provo, UT 84604',number:'801-422-9203',price:'',visited:'No',location:'',notes:"Called Wyview - at the bottom of the waitlist. We probably won't live here :/",tour:'',lat:null,lng:null},
+  {id:14,title:'Little White House',address:'272 S 200 E, Provo, UT',number:'720-701-9418',price:'$700',visited:'No',location:'',notes:'Reached out',tour:'',lat:null,lng:null},
+  {id:15,title:'Facebook Stadium House',address:'1700 N Canyon Rd, Provo, UT 84604',number:'',price:'',visited:'No',location:'',notes:'Has in unit dryer and washer, and parking',tour:'May 12 at 5:30 PM',lat:null,lng:null},
+];
+
+let houses=JSON.parse(localStorage.getItem('nadder-v1')||'null')||DEFAULT;
+function save(){localStorage.setItem('nadder-v1',JSON.stringify(houses));}
+let curTab='map',calMonth=new Date().getMonth(),calYear=new Date().getFullYear();
+let lmap=null,markers={},selId=null;
+
+document.getElementById('logo-img').src=LOGO;
+
+function goTab(t){
+  curTab=t;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('scr-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  const T={map:'Map',tour:'Tour Schedule',book:'House Book'};
+  document.getElementById('hdr-title').textContent=T[t];
+  const sw=document.getElementById('search-wrap'),ha=document.getElementById('hdr-action');
+  if(t==='map'){sw.style.display='none';ha.innerHTML='';setTimeout(()=>lmap&&lmap.invalidateSize(),120);}
+  else if(t==='tour'){sw.style.display='none';ha.innerHTML='';renderCal();}
+  else{sw.style.display='block';ha.innerHTML='<button class="add-btn" onclick="openAdd()">&#65291;</button>';renderList();}
+}
+
+function pinIcon(v){
+  const c=(v==='Yes'||v==='Yes (Santi)')?'#2e7d32':'#1E7A8A';
+  return L.divIcon({className:'',html:`<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,iconSize:[28,28],iconAnchor:[14,28]});
+}
+
+function addMarker(h){
+  if(!lmap||!h.lat||!h.lng)return;
+  if(markers[h.id])markers[h.id].remove();
+  const m=L.marker([h.lat,h.lng],{icon:pinIcon(h.visited)}).addTo(lmap);
+  m.on('click',()=>showCard(h.id));
+  markers[h.id]=m;
+}
+
+async function geo(addr){
+  try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`,{headers:{'Accept-Language':'en'}});const d=await r.json();if(d[0])return{lat:+d[0].lat,lng:+d[0].lon};}catch(e){}return null;
+}
+
+async function geocodeAll(){
+  let updated=false;
+  for(let i=0;i<houses.length;i++){
+    if(!houses[i].lat){await new Promise(r=>setTimeout(r,1100));const c=await geo(houses[i].address);if(c){houses[i].lat=c.lat;houses[i].lng=c.lng;updated=true;}}
+    addMarker(houses[i]);
+  }
+  if(updated)save();
+}
+
+function showCard(id){
+  selId=id;const h=houses.find(x=>x.id===id);
+  document.getElementById('bc-title').textContent=h.title;
+  document.getElementById('bc-addr').textContent=h.address;
+  document.getElementById('bcard').classList.add('show');
+}
+
+function initMap(){
+  lmap=L.map('leaflet-map',{center:[40.246,-111.648],zoom:13,zoomControl:false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(lmap);
+  L.control.zoom({position:'bottomright'}).addTo(lmap);
+  lmap.on('click',()=>{document.getElementById('bcard').classList.remove('show');selId=null;});
+  geocodeAll();
+}
+
+function renderList(q=''){
+  const q2=q.toLowerCase();
+  const rows=houses.filter(h=>!q2||h.title.toLowerCase().includes(q2)||h.address.toLowerCase().includes(q2));
+  document.getElementById('house-list').innerHTML=rows.map(h=>`<div class="hrow" onclick="openDetail(${h.id})"><div class="hrow-body"><div class="hrow-title">${h.title}</div><div class="hrow-addr">${h.address}</div></div><span class="hrow-dots">&#8943;</span></div>`).join('');
+}
+document.getElementById('search-inp').addEventListener('input',e=>renderList(e.target.value));
+
+function parseTour(t){
+  if(!t)return null;
+  const MO={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  const m=t.match(/([A-Za-z]+)\s+(\d+)/);
+  if(m){const mo=MO[m[1].toLowerCase().slice(0,3)];if(mo!==undefined)return{month:mo,day:+m[2],year:new Date().getFullYear()};}
+  return null;
+}
+
+function renderCal(){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  document.getElementById('cal-lbl').textContent=`${MN[calMonth]} ${calYear}`;
+  const tm={};
+  houses.forEach(h=>{const d=parseTour(h.tour);if(d&&d.month===calMonth&&d.year===calYear){if(!tm[d.day])tm[d.day]=[];tm[d.day].push(h);}});
+  const today=new Date(),fd=new Date(calYear,calMonth,1).getDay(),dim=new Date(calYear,calMonth+1,0).getDate(),pd=new Date(calYear,calMonth,0).getDate();
+  const total=Math.ceil((fd+dim)/7)*7;
+  let html=DN.map(d=>`<div class="cal-dh">${d}</div>`).join('');
+  for(let c=0;c<total;c++){
+    let num,cls='cal-cell',isThis=false;
+    if(c<fd){num=pd-fd+c+1;cls+=' other';}
+    else if(c>=fd+dim){num=c-fd-dim+1;cls+=' other';}
+    else{num=c-fd+1;isThis=true;}
+    const isT=isThis&&today.getDate()===num&&today.getMonth()===calMonth&&today.getFullYear()===calYear;
+    if(isT)cls+=' today';
+    const evts=isThis&&tm[num]?tm[num].map(h=>`<div class="cal-evt" onclick="event.stopPropagation();openDetail(${h.id})">${h.title.slice(0,9)}</div>`).join(''):'';
+    html+=`<div class="${cls}"><div class="cal-num">${num}</div>${evts}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+}
+function chMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
+
+function openDetail(id){
+  const h=houses.find(x=>x.id===id);if(!h)return;
+  document.getElementById('det-sh-title').textContent=h.title;
+  const vis=h.visited==='Yes'||h.visited==='Yes (Santi)';
+  const rows=[
+    h.number&&['Number',h.number],
+    h.price&&['Price',h.price],
+    ['Visited?',`<span class="badge ${vis?'badge-y':'badge-n'}">${vis?'✓ ':'✗ '}${h.visited}</span>`],
+    h.location&&['Location',h.location],
+    h.notes&&['Notes',`<span style="font-size:13px">${h.notes}</span>`],
+    h.tour&&['Tour',h.tour],
+  ].filter(Boolean);
+  document.getElementById('det-body').innerHTML=`<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l,v])=>`<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
+  openOv('ov-detail');
+}
+
+function openAdd(){
+  document.getElementById('form-lbl').textContent='Add House';
+  ['f-id','f-title','f-addr','f-num','f-price','f-loc','f-notes','f-tour'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-vis').value='No';openOv('ov-form');
+}
+
+function openEdit(id){
+  const h=houses.find(x=>x.id===id);if(!h)return;
+  document.getElementById('form-lbl').textContent='Edit House';
+  document.getElementById('f-id').value=h.id;
+  document.getElementById('f-title').value=h.title||'';
+  document.getElementById('f-addr').value=h.address||'';
+  document.getElementById('f-num').value=h.number||'';
+  document.getElementById('f-price').value=h.price||'';
+  document.getElementById('f-vis').value=h.visited||'No';
+  document.getElementById('f-loc').value=h.location||'';
+  document.getElementById('f-notes').value=h.notes||'';
+  document.getElementById('f-tour').value=h.tour||'';
+  openOv('ov-form');
+}
+
+async function saveHouse(){
+  const id=document.getElementById('f-id').value,addr=document.getElementById('f-addr').value;
+  const data={title:document.getElementById('f-title').value,address:addr,number:document.getElementById('f-num').value,price:document.getElementById('f-price').value,visited:document.getElementById('f-vis').value,location:document.getElementById('f-loc').value,notes:document.getElementById('f-notes').value,tour:document.getElementById('f-tour').value};
+  if(id){
+    const idx=houses.findIndex(h=>h.id===+id),ac=houses[idx].address!==addr;
+    data.lat=ac?null:houses[idx].lat;data.lng=ac?null:houses[idx].lng;
+    houses[idx]={...houses[idx],...data};
+    if(!data.lat){const c=await geo(addr);if(c){houses[idx].lat=c.lat;houses[idx].lng=c.lng;}}
+    addMarker(houses[idx]);
+  }else{
+    const nid=Math.max(0,...houses.map(h=>h.id))+1,nh={id:nid,lat:null,lng:null,...data};
+    houses.push(nh);
+    const c=await geo(addr);if(c){const i=houses.findIndex(h=>h.id===nid);houses[i].lat=c.lat;houses[i].lng=c.lng;addMarker(houses[i]);}
+  }
+  save();closeOv('ov-form');closeOv('ov-detail');
+  if(curTab==='book')renderList();if(curTab==='tour')renderCal();
+}
+
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+['ov-detail','ov-form'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)closeOv(id);}));
+
+initMap();
+</script>
+</body>
+</html>
