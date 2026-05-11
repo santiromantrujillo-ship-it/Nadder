@@ -7,281 +7,212 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Nadder">
   <title>Nadder House Hunt</title>
-  <link rel="apple-touch-icon" href="data:image/png;base64,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';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUsbYqMtPlK4l0ic5i8NKcBQUP3iAEJ8Vr3Q7OpTns7Ltq9sXd21miso61w-H1hiksJA/exec'; 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    :root{--teal:#1E7A8A;--white:#fff;--gray-light:#f5f7f8;--gray:#e2e6e8;--text:#1a1a1a;--muted:#6b7280;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;background:#fff;display:flex;flex-direction:column;max-width:480px;margin:0 auto;height:100dvh;}
+    .header{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));min-height:54px;flex-shrink:0;position:relative;}
+    .hdr-title{font-size:18px;font-weight:600;position:absolute;left:50%;transform:translateX(-50%);}
+    .hdr-l{width:36px;}.hdr-r{min-width:36px;display:flex;justify-content:flex-end;}
+    .add-btn{background:#fff;color:var(--teal);border:none;border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
+    .search-wrap{background:var(--teal);padding:0 14px 10px;flex-shrink:0;display:none;}
+    .search-inner{position:relative;}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.65);font-size:14px;}
+    .search-input{width:100%;background:rgba(255,255,255,.18);border:none;border-radius:10px;padding:9px 12px 9px 32px;color:#fff;font-size:15px;outline:none;}
+    .search-input::placeholder{color:rgba(255,255,255,.65);}
+    .screen{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
+    .screen.active{display:flex;}
+    .map-wrap{position:relative;flex:1;min-height:0;}
+    #leaflet-map{width:100%;height:100%;}
+    .map-fab{position:absolute;top:12px;right:12px;z-index:500;background:#fff;color:var(--teal);border:none;border-radius:22px;padding:9px 16px;font-size:14px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;}
+    .bcard{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 24px;box-shadow:0 -4px 24px rgba(0,0,0,.14);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,0,1);z-index:500;cursor:pointer;}
+    .bcard.show{transform:translateY(0);}
+    .bc-title{font-size:17px;font-weight:700;color:var(--text);}
+    .bc-addr{font-size:13px;color:var(--muted);margin-top:3px;}
+    .bc-hint{font-size:12px;color:var(--teal);margin-top:8px;font-weight:500;}
+    .logo-bar{background:#fff;display:flex;align-items:center;justify-content:center;padding:10px 0 8px;flex-shrink:0;border-top:1px solid var(--gray);}
+    .logo-bar img{height:56px;object-fit:contain;}
+    .list-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+    .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);cursor:pointer;gap:12px;transition:background .12s;}
+    .hrow:active{background:var(--gray-light);}
+    .hrow-body{flex:1;}
+    .hrow-title{font-size:16px;font-weight:600;color:var(--text);}
+    .hrow-addr{font-size:13px;color:var(--muted);margin-top:2px;}
+    .hrow-dots{color:var(--muted);font-size:20px;}
+    .cal-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;}
+    .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .cal-mo{font-size:18px;font-weight:600;}
+    .cal-navs{display:flex;gap:6px;}
+    .cal-nb{width:32px;height:32px;border-radius:50%;border:1px solid var(--gray);background:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+    .cal-dh{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding:4px 0;}
+    .cal-cell{min-height:58px;border:1px solid var(--gray);border-radius:5px;padding:3px 2px;background:#fff;}
+    .cal-cell.other{background:var(--gray-light);}
+    .cal-cell.today{background:rgba(30,122,138,.07);border-color:var(--teal);}
+    .cal-num{font-size:11px;color:var(--muted);margin-bottom:2px;}
+    .cal-cell.today .cal-num{color:var(--teal);font-weight:700;}
+    .cal-evt{background:var(--teal);color:#fff;border-radius:3px;font-size:9px;padding:1px 3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:flex-end;justify-content:center;}
+    .overlay.open{display:flex;}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(24px,env(safe-area-inset-bottom));}
+    .sh-handle{width:38px;height:4px;background:var(--gray);border-radius:2px;margin:12px auto 0;}
+    .sh-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--gray);}
+    .sh-title{font-size:17px;font-weight:600;}
+    .sh-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px;}
+    .sh-body{padding:18px;}
+    .det-title{font-size:22px;font-weight:700;}
+    .det-addr{font-size:14px;color:var(--muted);margin-top:4px;}
+    .det-edit{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;}
+    .det-fields{margin-top:18px;}
+    .det-row{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--gray);gap:16px;}
+    .det-lbl{font-size:15px;color:var(--muted);flex-shrink:0;}
+    .det-val{font-size:14px;color:var(--text);text-align:right;max-width:62%;}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;}
+    .badge-y{background:#e8f5e9;color:#2e7d32;}.badge-n{background:#fff3e0;color:#bf360c;}
+    .fg{margin-bottom:16px;}
+    .fl{display:block;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .fi,.fta,.fsel{width:100%;padding:11px 13px;border:1.5px solid var(--gray);border-radius:10px;font-size:15px;outline:none;font-family:inherit;color:var(--text);background:#fff;}
+    .fi:focus,.fta:focus{border-color:var(--teal);}
+    .fta{min-height:80px;resize:vertical;}
+    .save-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .tabbar{display:flex;background:#fff;border-top:1px solid var(--gray);flex-shrink:0;padding-bottom:max(0px,env(safe-area-inset-bottom));}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;gap:3px;border:none;background:none;color:var(--muted);font-size:10px;cursor:pointer;transition:color .15s;}
+    .tab.active{color:var(--teal);}
+    .tab svg{width:24px;height:24px;}
+    .tab-lbl{font-size:9px;}
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0%;transition:width .3s;z-index:9999;}
+    .loading-bar.active{width:70%;}
+    .loading-bar.done{width:100%;opacity:0;transition:width .3s,opacity .3s .3s;}
+    .sync-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block;margin-left:6px;vertical-align:middle;}
+    .sync-dot.syncing{background:#ff9800;animation:pulse 1s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  </style>
+</head>
+<body>
+<div class="loading-bar" id="loading-bar"></div>
+<div class="toast" id="toast"></div>
+<div class="header">
+  <div class="hdr-l"><span class="sync-dot" id="sync-dot"></span></div>
+  <span class="hdr-title" id="hdr-title">Map</span>
+  <div class="hdr-r" id="hdr-action"></div>
+</div>
+<div class="search-wrap" id="search-wrap">
+  <div class="search-inner">
+    <span class="search-icon">&#128269;</span>
+    <input class="search-input" id="search-inp" placeholder="Search" type="search">
+  </div>
+</div>
 
-// ── SHEET HELPERS ─────────────────────────────────────────────────────────────
-function rowToHouse(obj, idx) {
-  // Matches the cleaning logic in your Google Script: lowercase, no spaces/chars
-  return {
-    id: idx,
-    title:    obj.title || '',
-    address:  obj.address || '',
-    number:   obj.number || '',
-    price:    obj.price || '',
-    visited:  obj.visited || 'No',
-    location: obj.locationfromcampus || '', 
-    notes:    obj.notes || '',
-    tour:     obj.tour || '',
-    lat: coordsCache[obj.address]?.lat || null,
-    lng: coordsCache[obj.address]?.lng || null,
-  };
-}
+<!-- MAP -->
+<div class="screen active" id="scr-map">
+  <div class="map-wrap">
+    <div id="leaflet-map"></div>
+    <button class="map-fab" onclick="openAdd()">+ Add House!</button>
+    <div class="bcard" id="bcard" onclick="openDetail(selId)">
+      <div class="bc-title" id="bc-title"></div>
+      <div class="bc-addr" id="bc-addr"></div>
+      <div class="bc-hint">Tap to view details &#8594;</div>
+    </div>
+  </div>
+  <div class="logo-bar"><img id="logo-img" src="" alt="Nadder"></div>
+</div>
 
-function houseToRow(h) {
-  // ORDER MUST MATCH YOUR SHEET COLUMNS:
-  // Address, Title, Number, Location from Campus, Cleanliness, Price, Visited?, Notes, Tour
-  return [
-    h.address, 
-    h.title, 
-    h.number, 
-    h.location || '', 
-    '', // Cleanliness placeholder
-    h.price, 
-    h.visited, 
-    h.notes, 
-    h.tour
-  ];
-}
+<!-- TOUR CALENDAR -->
+<div class="screen" id="scr-tour">
+  <div class="cal-scroll">
+    <div class="cal-head">
+      <span class="cal-mo" id="cal-lbl"></span>
+      <div class="cal-navs">
+        <button class="cal-nb" onclick="chMonth(-1)">&#8249;</button>
+        <button class="cal-nb" onclick="chMonth(1)">&#8250;</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</div>
 
-// ── GOOGLE SHEET SYNC ─────────────────────────────────────────────────────────
-async function loadSheet() {
-  setLoading(true);
-  try {
-    // FIX: redirect 'follow' is required for Google Script Web Apps
-    const res = await fetch(SCRIPT_URL, { redirect: 'follow' });
-    const jsonData = await res.json();
-    
-    // Map the objects directly since your script already handles JSON conversion
-    houses = jsonData.map((obj, i) => rowToHouse(obj, i + 1));
-    
-    localStorage.setItem('nadder-cache', JSON.stringify(houses));
-    renderAll();
-    toast('Synced ✓');
-  } catch(e) {
-    console.warn('Sheet load failed', e);
-    toast('Sync Failed ✗');
-  }
-  setLoading(false);
-}
+<!-- HOUSE BOOK -->
+<div class="screen" id="scr-book">
+  <div class="list-scroll" id="house-list"></div>
+</div>
 
-async function writeToSheet(action, row) {
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ action, row })
-    });
-  } catch(e) { 
-    console.warn('Write failed:', e); 
-  }
-}
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="ov-detail">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head">
+      <span class="sh-title" id="det-sh-title"></span>
+      <button class="sh-close" onclick="closeOv('ov-detail')">&#10005;</button>
+    </div>
+    <div class="sh-body" id="det-body"></div>
+  </div>
+</div>
 
-// ── SHEET HEADER SYNC (Not used) ──────────────────────────────────────────────
-async function ensureHeaders() {}
+<!-- FORM OVERLAY -->
+<div class="overlay" id="ov-form">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head">
+      <span class="sh-title" id="form-lbl">Add House</span>
+      <button class="sh-close" onclick="closeOv('ov-form')">&#10005;</button>
+    </div>
+    <div class="sh-body">
+      <input type="hidden" id="f-id">
+      <div class="fg"><label class="fl">Title</label><input class="fi" id="f-title" placeholder="Cambridge Apartments"></div>
+      <div class="fg"><label class="fl">Address</label><input class="fi" id="f-addr" placeholder="123 N Main St, Provo, UT"></div>
+      <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="f-num" type="tel" placeholder="(801) 555-0000"></div>
+      <div class="fg"><label class="fl">Price</label><input class="fi" id="f-price" placeholder="~$1,200/mo"></div>
+      <div class="fg"><label class="fl">Visited?</label>
+        <select class="fi fsel" id="f-vis">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+          <option value="Yes (Santi)">Yes (Santi)</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Location from Campus</label><input class="fi" id="f-loc" placeholder="5 min walk"></div>
+      <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="f-notes" placeholder="Any notes..."></textarea></div>
+      <div class="fg"><label class="fl">Tour Date</label><input class="fi" id="f-tour" placeholder="May 12 at 9 AM"></div>
+      <button class="save-btn" onclick="saveHouse()">Save</button>
+    </div>
+  </div>
+</div>
 
-// ── MAP ───────────────────────────────────────────────────────────────────────
-function pinIcon(v) {
-  const c = (v==='Yes'||v==='Yes (Santi)') ? '#2e7d32' : '#1E7A8A';
-  return L.divIcon({className:'',html:`<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`,iconSize:[28,28],iconAnchor:[14,28]});
-}
+<!-- TAB BAR -->
+<div class="tabbar">
+  <button class="tab active" id="tab-map" onclick="goTab('map')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span class="tab-lbl">Map</span>
+  </button>
+  <button class="tab" id="tab-tour" onclick="goTab('tour')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span class="tab-lbl">Tour Schedule</span>
+  </button>
+  <button class="tab" id="tab-book" onclick="goTab('book')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="tab-lbl">House Book</span>
+  </button>
+</div>
 
-function addMarker(h) {
-  if(!lmap||!h.lat||!h.lng) return;
-  if(markers[h.id]) markers[h.id].remove();
-  const m = L.marker([h.lat,h.lng],{icon:pinIcon(h.visited)}).addTo(lmap);
-  m.on('click', ()=>showCard(h.id));
-  markers[h.id] = m;
-}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ── LOGO ──────────────────────────────────────────────────────────────────────
+const LOGO = 'data:image/png;base64,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';
 
-async function geo(addr) {
-  if(coordsCache[addr]) return coordsCache[addr];
-  try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`,{headers:{'Accept-Language':'en'}});
-    const d = await r.json();
-    if(d[0]) {
-      const c = {lat:+d[0].lat, lng:+d[0].lon};
-      coordsCache[addr] = c;
-      localStorage.setItem('nadder-coords', JSON.stringify(coordsCache));
-      return c;
-    }
-  } catch(e) {}
-  return null;
-}
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUsbYqMtPlK4l0ic5i8NKcBQUP3iAEJ8Vr3Q7OpTns7Ltq9sXd21miso61w-H1hiksJA/exec';
 
-async function geocodeAll() {
-  for(let i=0; i<houses.length; i++) {
-    if(!houses[i].lat) {
-      await new Promise(r=>setTimeout(r,1100));
-      const c = await geo(houses[i].address);
-      if(c) { houses[i].lat=c.lat; houses[i].lng=c.lng; }
-    }
-    addMarker(houses[i]);
-  }
-}
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let houses = JSON.parse(localStorage.getItem('nadder-cache') || '[]');
+let coordsCache = JSON.parse(localStorage.getItem('nadder-coords') || '{}');
+let curTab = 'map', calMonth = new Date().getMonth(), calYear = new Date().getFullYear();
+let lmap = null, markers = {}, selId = null;
 
-function showCard(id) {
-  selId=id;
-  const h=houses.find(x=>x.id===id);
-  document.getElementById('bc-title').textContent=h.title;
-  document.getElementById('bc-addr').textContent=h.address;
-  document.getElementById('bcard').classList.add('show');
-}
+document.getElementById('logo-img').src = LOGO;
 
-function initMap() {
-  lmap=L.map('leaflet-map',{center:[40.246,-111.648],zoom:13,zoomControl:false});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(lmap);
-  L.control.zoom({position:'bottomright'}).addTo(lmap);
-  lmap.on('click',()=>{document.getElementById('bcard').classList.remove('show');selId=null;});
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function renderAll() {
-  if(curTab==='book') renderList();
-  if(curTab==='tour') renderCal();
-  Object.values(markers).forEach(m=>m.remove());
-  markers={};
-  geocodeAll();
-}
-
-function renderList(q='') {
-  const q2=q.toLowerCase();
-  const rows=houses.filter(h=>!q2||h.title.toLowerCase().includes(q2)||h.address.toLowerCase().includes(q2));
-  document.getElementById('house-list').innerHTML=rows.map(h=>`<div class="hrow" onclick="openDetail(${h.id})"><div class="hrow-body"><div class="hrow-title">${h.title}</div><div class="hrow-addr">${h.address}</div></div><span class="hrow-dots">&#8943;</span></div>`).join('');
-}
-document.getElementById('search-inp').addEventListener('input',e=>renderList(e.target.value));
-
-function parseTour(t) {
-  if(!t) return null;
-  const MO={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-  const m=t.match(/([A-Za-z]+)\s+(\d+)/);
-  if(m){const mo=MO[m[1].toLowerCase().slice(0,3)];if(mo!==undefined)return{month:mo,day:+m[2],year:new Date().getFullYear()};}
-  return null;
-}
-
-function renderCal() {
-  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  document.getElementById('cal-lbl').textContent=`${MN[calMonth]} ${calYear}`;
-  const tm={};
-  houses.forEach(h=>{const d=parseTour(h.tour);if(d&&d.month===calMonth&&d.year===calYear){if(!tm[d.day])tm[d.day]=[];tm[d.day].push(h);}});
-  const today=new Date(),fd=new Date(calYear,calMonth,1).getDay(),dim=new Date(calYear,calMonth+1,0).getDate(),pd=new Date(calYear,calMonth,0).getDate();
-  const total=Math.ceil((fd+dim)/7)*7;
-  let html=DN.map(d=>`<div class="cal-dh">${d}</div>`).join('');
-  for(let c=0;c<total;c++){
-    let num,cls='cal-cell',isThis=false;
-    if(c<fd){num=pd-fd+c+1;cls+=' other';}
-    else if(c>=fd+dim){num=c-fd-dim+1;cls+=' other';}
-    else{num=c-fd+1;isThis=true;}
-    const isT=isThis&&today.getDate()===num&&today.getMonth()===calMonth&&today.getFullYear()===calYear;
-    if(isT)cls+=' today';
-    const evts=isThis&&tm[num]?tm[num].map(h=>`<div class="cal-evt" onclick="event.stopPropagation();openDetail(${h.id})">${h.title.slice(0,9)}</div>`).join(''):'';
-    html+=`<div class="${cls}"><div class="cal-num">${num}</div>${evts}</div>`;
-  }
-  document.getElementById('cal-grid').innerHTML=html;
-}
-function chMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
-
-// ── TAB ───────────────────────────────────────────────────────────────────────
-function goTab(t) {
-  curTab=t;
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('scr-'+t).classList.add('active');
-  document.getElementById('tab-'+t).classList.add('active');
-  const T={map:'Map',tour:'Tour Schedule',book:'House Book'};
-  document.getElementById('hdr-title').textContent=T[t];
-  const sw=document.getElementById('search-wrap'),ha=document.getElementById('hdr-action');
-  if(t==='map'){sw.style.display='none';ha.innerHTML='';setTimeout(()=>lmap&&lmap.invalidateSize(),120);}
-  else if(t==='tour'){sw.style.display='none';ha.innerHTML='<button class="add-btn" onclick="loadSheet()">&#8635;</button>';renderCal();}
-  else{sw.style.display='block';ha.innerHTML='<button class="add-btn" onclick="openAdd()">&#65291;</button>';renderList();}
-}
-
-// ── DETAIL ────────────────────────────────────────────────────────────────────
-function openDetail(id) {
-  const h=houses.find(x=>x.id===id);if(!h)return;
-  document.getElementById('det-sh-title').textContent=h.title;
-  const vis=h.visited==='Yes'||h.visited==='Yes (Santi)';
-  const rows=[
-    h.number&&['Number',h.number],
-    h.price&&['Price',h.price],
-    ['Visited?',`<span class="badge ${vis?'badge-y':'badge-n'}">${vis?'✓ ':'✗ '}${h.visited}</span>`],
-    h.location&&['Location',h.location],
-    h.notes&&['Notes',`<span style="font-size:13px">${h.notes}</span>`],
-    h.tour&&['Tour',h.tour],
-  ].filter(Boolean);
-  document.getElementById('det-body').innerHTML=`<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l,v])=>`<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
-  openOv('ov-detail');
-}
-
-// ── ADD / EDIT ────────────────────────────────────────────────────────────────
-function openAdd() {
-  document.getElementById('form-lbl').textContent='Add House';
-  ['f-id','f-title','f-addr','f-num','f-price','f-loc','f-notes','f-tour'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('f-vis').value='No';
-  openOv('ov-form');
-}
-
-function openEdit(id) {
-  const h=houses.find(x=>x.id===id);if(!h)return;
-  document.getElementById('form-lbl').textContent='Edit House';
-  document.getElementById('f-id').value=h.id;
-  document.getElementById('f-title').value=h.title||'';
-  document.getElementById('f-addr').value=h.address||'';
-  document.getElementById('f-num').value=h.number||'';
-  document.getElementById('f-price').value=h.price||'';
-  document.getElementById('f-vis').value=h.visited||'No';
-  document.getElementById('f-loc').value=h.location||'';
-  document.getElementById('f-notes').value=h.notes||'';
-  document.getElementById('f-tour').value=h.tour||'';
-  openOv('ov-form');
-}
-
-async function saveHouse() {
-  const id = document.getElementById('f-id').value;
-  const h = {
-    title:    document.getElementById('f-title').value,
-    address: document.getElementById('f-addr').value,
-    number:  document.getElementById('f-num').value,
-    price:   document.getElementById('f-price').value,
-    visited: document.getElementById('f-vis').value,
-    location:document.getElementById('f-loc').value,
-    notes:   document.getElementById('f-notes').value,
-    tour:    document.getElementById('f-tour').value,
-  };
-  const row = houseToRow(h);
-
-  if(id) {
-    const idx = houses.findIndex(x=>x.id===+id);
-    const addrChanged = houses[idx].address !== h.address;
-    houses[idx] = {...houses[idx],...h, lat: addrChanged?null:houses[idx].lat, lng: addrChanged?null:houses[idx].lng};
-    localStorage.setItem('nadder-cache', JSON.stringify(houses));
-    await writeToSheet('update', row);
-    if(!houses[idx].lat) { const c=await geo(h.address); if(c){houses[idx].lat=c.lat;houses[idx].lng=c.lng;} }
-    addMarker(houses[idx]);
-  } else {
-    const newId = Math.max(0,...houses.map(x=>x.id))+1;
-    const newH = {id:newId, lat:null, lng:null, ...h};
-    houses.push(newH);
-    localStorage.setItem('nadder-cache', JSON.stringify(houses));
-    await writeToSheet('add', row);
-    const c=await geo(h.address);
-    if(c){const i=houses.findIndex(x=>x.id===newId);houses[i].lat=c.lat;houses[i].lng=c.lng;addMarker(houses[i]);}
-  }
-
-  toast('Saved ✓');
-  closeOv('ov-form'); closeOv('ov-detail');
-  if(curTab==='book') renderList();
-  if(curTab==='tour') renderCal();
-}
-
-// ── OVERLAYS ─────────────────────────────────────────────────────────────────
-function openOv(id){document.getElementById(id).classList.add('open');}
-function closeOv(id){document.getElementById(id).classList.remove('open');}
-['ov-detail','ov-form'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)closeOv(id);}));
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// ── TOAST & LOADING ───────────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -291,12 +222,267 @@ function toast(msg) {
 function setLoading(on) {
   const b = document.getElementById('loading-bar');
   const d = document.getElementById('sync-dot');
-  if (on) { b.className='loading-bar active'; d.className='sync-dot syncing'; }
-  else { b.className='loading-bar done'; d.className='sync-dot'; setTimeout(()=>b.className='loading-bar',700); }
+  if (on) { b.className = 'loading-bar active'; d.className = 'sync-dot syncing'; }
+  else { b.className = 'loading-bar done'; d.className = 'sync-dot'; setTimeout(() => b.className = 'loading-bar', 700); }
 }
 
+// ── SHEET HELPERS ─────────────────────────────────────────────────────────────
+// doGet returns array-of-arrays; row[0]=header. Columns: Title,Address,Number,Price,Visited,Location,Notes,Tour
+function rowToHouse(row, idx) {
+  const g = i => (row[i] != null ? row[i].toString().trim() : '');
+  return {
+    id:       idx,
+    title:    g(0),
+    address:  g(1),
+    number:   g(2),
+    price:    g(3),
+    visited:  g(4) || 'No',
+    location: g(5),
+    notes:    g(6),
+    tour:     g(7),
+    lat:      coordsCache[g(1)]?.lat || null,
+    lng:      coordsCache[g(1)]?.lng || null,
+  };
+}
+
+function houseToRow(h) {
+  return [h.title, h.address, h.number, h.price, h.visited, h.location, h.notes, h.tour];
+}
+
+// ── GOOGLE SHEET SYNC ─────────────────────────────────────────────────────────
+async function loadSheet() {
+  setLoading(true);
+  try {
+    const res = await fetch(SCRIPT_URL, { redirect: 'follow' });
+    const rows = await res.json();
+    // rows[0] is the header row — skip it; filter out blank title rows
+    const data = rows.slice(1).filter(r => r[0] && r[0].toString().trim());
+    houses = data.map((r, i) => rowToHouse(r, i + 1));
+    localStorage.setItem('nadder-cache', JSON.stringify(houses));
+    renderAll();
+    toast('Synced ✓');
+  } catch (e) {
+    console.warn('Sheet load failed, using cache', e);
+    toast('Offline — showing cached data');
+  }
+  setLoading(false);
+}
+
+async function writeToSheet(action, row) {
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, row })
+    });
+  } catch (e) { console.warn('Write failed:', e); }
+}
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+function pinIcon(v) {
+  const c = (v === 'Yes' || v === 'Yes (Santi)') ? '#2e7d32' : '#1E7A8A';
+  return L.divIcon({ className: '', html: `<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`, iconSize: [28, 28], iconAnchor: [14, 28] });
+}
+
+function addMarker(h) {
+  if (!lmap || !h.lat || !h.lng) return;
+  if (markers[h.id]) markers[h.id].remove();
+  const m = L.marker([h.lat, h.lng], { icon: pinIcon(h.visited) }).addTo(lmap);
+  m.on('click', () => showCard(h.id));
+  markers[h.id] = m;
+}
+
+async function geo(addr) {
+  if (coordsCache[addr]) return coordsCache[addr];
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, { headers: { 'Accept-Language': 'en' } });
+    const d = await r.json();
+    if (d[0]) {
+      const c = { lat: +d[0].lat, lng: +d[0].lon };
+      coordsCache[addr] = c;
+      localStorage.setItem('nadder-coords', JSON.stringify(coordsCache));
+      return c;
+    }
+  } catch (e) {}
+  return null;
+}
+
+async function geocodeAll() {
+  for (let i = 0; i < houses.length; i++) {
+    if (!houses[i].lat) {
+      await new Promise(r => setTimeout(r, 1100));
+      const c = await geo(houses[i].address);
+      if (c) { houses[i].lat = c.lat; houses[i].lng = c.lng; }
+    }
+    addMarker(houses[i]);
+  }
+}
+
+function showCard(id) {
+  selId = id;
+  const h = houses.find(x => x.id === id);
+  document.getElementById('bc-title').textContent = h.title;
+  document.getElementById('bc-addr').textContent = h.address;
+  document.getElementById('bcard').classList.add('show');
+}
+
+function initMap() {
+  lmap = L.map('leaflet-map', { center: [40.246, -111.648], zoom: 13, zoomControl: false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(lmap);
+  L.control.zoom({ position: 'bottomright' }).addTo(lmap);
+  lmap.on('click', () => { document.getElementById('bcard').classList.remove('show'); selId = null; });
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderAll() {
+  if (curTab === 'book') renderList();
+  if (curTab === 'tour') renderCal();
+  Object.values(markers).forEach(m => m.remove());
+  markers = {};
+  geocodeAll();
+}
+
+function renderList(q = '') {
+  const q2 = q.toLowerCase();
+  const rows = houses.filter(h => !q2 || h.title.toLowerCase().includes(q2) || h.address.toLowerCase().includes(q2));
+  document.getElementById('house-list').innerHTML = rows.map(h =>
+    `<div class="hrow" onclick="openDetail(${h.id})"><div class="hrow-body"><div class="hrow-title">${h.title}</div><div class="hrow-addr">${h.address}</div></div><span class="hrow-dots">&#8943;</span></div>`
+  ).join('');
+}
+document.getElementById('search-inp').addEventListener('input', e => renderList(e.target.value));
+
+function parseTour(t) {
+  if (!t) return null;
+  const MO = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+  const m = t.match(/([A-Za-z]+)\s+(\d+)/);
+  if (m) { const mo = MO[m[1].toLowerCase().slice(0, 3)]; if (mo !== undefined) return { month: mo, day: +m[2], year: new Date().getFullYear() }; }
+  return null;
+}
+
+function renderCal() {
+  const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  document.getElementById('cal-lbl').textContent = `${MN[calMonth]} ${calYear}`;
+  const tm = {};
+  houses.forEach(h => { const d = parseTour(h.tour); if (d && d.month === calMonth && d.year === calYear) { if (!tm[d.day]) tm[d.day] = []; tm[d.day].push(h); } });
+  const today = new Date(), fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth + 1, 0).getDate(), pd = new Date(calYear, calMonth, 0).getDate();
+  const total = Math.ceil((fd + dim) / 7) * 7;
+  let html = DN.map(d => `<div class="cal-dh">${d}</div>`).join('');
+  for (let c = 0; c < total; c++) {
+    let num, cls = 'cal-cell', isThis = false;
+    if (c < fd) { num = pd - fd + c + 1; cls += ' other'; }
+    else if (c >= fd + dim) { num = c - fd - dim + 1; cls += ' other'; }
+    else { num = c - fd + 1; isThis = true; }
+    const isT = isThis && today.getDate() === num && today.getMonth() === calMonth && today.getFullYear() === calYear;
+    if (isT) cls += ' today';
+    const evts = isThis && tm[num] ? tm[num].map(h => `<div class="cal-evt" onclick="event.stopPropagation();openDetail(${h.id})">${h.title.slice(0,9)}</div>`).join('') : '';
+    html += `<div class="${cls}"><div class="cal-num">${num}</div>${evts}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+function chMonth(d) { calMonth += d; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+
+// ── TAB ───────────────────────────────────────────────────────────────────────
+function goTab(t) {
+  curTab = t;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('scr-' + t).classList.add('active');
+  document.getElementById('tab-' + t).classList.add('active');
+  const T = { map: 'Map', tour: 'Tour Schedule', book: 'House Book' };
+  document.getElementById('hdr-title').textContent = T[t];
+  const sw = document.getElementById('search-wrap'), ha = document.getElementById('hdr-action');
+  if (t === 'map') { sw.style.display = 'none'; ha.innerHTML = ''; setTimeout(() => lmap && lmap.invalidateSize(), 120); }
+  else if (t === 'tour') { sw.style.display = 'none'; ha.innerHTML = '<button class="add-btn" onclick="loadSheet()">&#8635;</button>'; renderCal(); }
+  else { sw.style.display = 'block'; ha.innerHTML = '<button class="add-btn" onclick="openAdd()">&#65291;</button>'; renderList(); }
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const h = houses.find(x => x.id === id); if (!h) return;
+  document.getElementById('det-sh-title').textContent = h.title;
+  const vis = h.visited === 'Yes' || h.visited === 'Yes (Santi)';
+  const rows = [
+    h.number   && ['Number',   h.number],
+    h.price    && ['Price',    h.price],
+    ['Visited?', `<span class="badge ${vis ? 'badge-y' : 'badge-n'}">${vis ? '✓ ' : '✗ '}${h.visited}</span>`],
+    h.location && ['Location', h.location],
+    h.notes    && ['Notes',    `<span style="font-size:13px">${h.notes}</span>`],
+    h.tour     && ['Tour',     h.tour],
+  ].filter(Boolean);
+  document.getElementById('det-body').innerHTML =
+    `<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l, v]) => `<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
+  openOv('ov-detail');
+}
+
+// ── ADD / EDIT ────────────────────────────────────────────────────────────────
+function openAdd() {
+  document.getElementById('form-lbl').textContent = 'Add House';
+  ['f-id','f-title','f-addr','f-num','f-price','f-loc','f-notes','f-tour'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('f-vis').value = 'No';
+  openOv('ov-form');
+}
+
+function openEdit(id) {
+  const h = houses.find(x => x.id === id); if (!h) return;
+  document.getElementById('form-lbl').textContent = 'Edit House';
+  document.getElementById('f-id').value    = h.id;
+  document.getElementById('f-title').value = h.title    || '';
+  document.getElementById('f-addr').value  = h.address  || '';
+  document.getElementById('f-num').value   = h.number   || '';
+  document.getElementById('f-price').value = h.price    || '';
+  document.getElementById('f-vis').value   = h.visited  || 'No';
+  document.getElementById('f-loc').value   = h.location || '';
+  document.getElementById('f-notes').value = h.notes    || '';
+  document.getElementById('f-tour').value  = h.tour     || '';
+  openOv('ov-form');
+}
+
+async function saveHouse() {
+  const id = document.getElementById('f-id').value;
+  const h = {
+    title:    document.getElementById('f-title').value,
+    address:  document.getElementById('f-addr').value,
+    number:   document.getElementById('f-num').value,
+    price:    document.getElementById('f-price').value,
+    visited:  document.getElementById('f-vis').value,
+    location: document.getElementById('f-loc').value,
+    notes:    document.getElementById('f-notes').value,
+    tour:     document.getElementById('f-tour').value,
+  };
+  const row = houseToRow(h);
+  if (id) {
+    const idx = houses.findIndex(x => x.id === +id);
+    const addrChanged = houses[idx].address !== h.address;
+    houses[idx] = { ...houses[idx], ...h, lat: addrChanged ? null : houses[idx].lat, lng: addrChanged ? null : houses[idx].lng };
+    localStorage.setItem('nadder-cache', JSON.stringify(houses));
+    await writeToSheet('update', row);
+    if (!houses[idx].lat) { const c = await geo(h.address); if (c) { houses[idx].lat = c.lat; houses[idx].lng = c.lng; } }
+    addMarker(houses[idx]);
+  } else {
+    const newId = Math.max(0, ...houses.map(x => x.id)) + 1;
+    const newH = { id: newId, lat: null, lng: null, ...h };
+    houses.push(newH);
+    localStorage.setItem('nadder-cache', JSON.stringify(houses));
+    await writeToSheet('add', row);
+    const c = await geo(h.address);
+    if (c) { const i = houses.findIndex(x => x.id === newId); houses[i].lat = c.lat; houses[i].lng = c.lng; addMarker(houses[i]); }
+  }
+  toast('Saved ✓');
+  closeOv('ov-form'); closeOv('ov-detail');
+  if (curTab === 'book') renderList();
+  if (curTab === 'tour') renderCal();
+}
+
+// ── OVERLAYS ─────────────────────────────────────────────────────────────────
+function openOv(id) { document.getElementById(id).classList.add('open'); }
+function closeOv(id) { document.getElementById(id).classList.remove('open'); }
+['ov-detail', 'ov-form'].forEach(id => document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) closeOv(id); }));
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
 initMap();
-if(houses.length) { renderAll(); geocodeAll(); }
+if (houses.length) { renderAll(); geocodeAll(); }
 loadSheet();
 </script>
 </body>
