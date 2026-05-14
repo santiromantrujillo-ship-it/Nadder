@@ -32,8 +32,7 @@
     .bc-title{font-size:17px;font-weight:700;color:var(--text);}
     .bc-addr{font-size:13px;color:var(--muted);margin-top:3px;}
     .bc-hint{font-size:12px;color:var(--teal);margin-top:8px;font-weight:500;}
-    .logo-bar{background:#fff;display:flex;align-items:center;justify-content:center;padding:10px 0 8px;flex-shrink:0;border-top:1px solid var(--gray);}
-    .logo-bar img{height:56px;object-fit:contain;}
+    .logo-bar{background:#fff;display:flex;align-items:center;justify-content:center;padding:12px 0;flex-shrink:0;border-top:1px solid var(--gray);font-size:20px;font-weight:700;color:var(--teal);}
     .list-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
     .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);cursor:pointer;gap:12px;transition:background .12s;}
     .hrow:active{background:var(--gray-light);}
@@ -95,6 +94,7 @@
 <body>
 <div class="loading-bar" id="loading-bar"></div>
 <div class="toast" id="toast"></div>
+
 <div class="header">
   <div class="hdr-l"><span class="sync-dot" id="sync-dot"></span></div>
   <span class="hdr-title" id="hdr-title">Map</span>
@@ -118,7 +118,7 @@
       <div class="bc-hint">Tap to view details &#8594;</div>
     </div>
   </div>
-  <div class="logo-bar"><img id="logo-img" src="" alt="Nadder"></div>
+  <div class="logo-bar">🏠 Nadder</div>
 </div>
 
 <!-- TOUR CALENDAR -->
@@ -199,71 +199,138 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-// ── LOGO ──────────────────────────────────────────────────────────────────────
-const LOGO = 'data:image/png;base64,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';
-
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUsbYqMtPlK4l0ic5i8NKcBQUP3iAEJ8Vr3Q7OpTns7Ltq9sXd21miso61w-H1hiksJA/exec';
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let houses = JSON.parse(localStorage.getItem('nadder-cache') || '[]');
+let houses     = JSON.parse(localStorage.getItem('nadder-cache')  || '[]');
 let coordsCache = JSON.parse(localStorage.getItem('nadder-coords') || '{}');
 let curTab = 'map', calMonth = new Date().getMonth(), calYear = new Date().getFullYear();
 let lmap = null, markers = {}, selId = null;
 
-document.getElementById('logo-img').src = LOGO;
+// colMap is built by reading the actual header row — no hardcoding
+let colMap = {};
 
 // ── TOAST & LOADING ───────────────────────────────────────────────────────────
-function toast(msg) {
+function toast(msg, ms = 3500) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), ms);
 }
-
 function setLoading(on) {
-  const b = document.getElementById('loading-bar');
-  const d = document.getElementById('sync-dot');
+  const b = document.getElementById('loading-bar'), d = document.getElementById('sync-dot');
   if (on) { b.className = 'loading-bar active'; d.className = 'sync-dot syncing'; }
-  else { b.className = 'loading-bar done'; d.className = 'sync-dot'; setTimeout(() => b.className = 'loading-bar', 700); }
+  else    { b.className = 'loading-bar done';   d.className = 'sync-dot'; setTimeout(() => b.className = 'loading-bar', 700); }
 }
 
-// ── SHEET HELPERS ─────────────────────────────────────────────────────────────
-// doGet returns array-of-arrays; row[0]=header. Columns: Title,Address,Number,Price,Visited,Location,Notes,Tour
+// ── COLUMN DETECTION ──────────────────────────────────────────────────────────
+function buildColMap(headerRow) {
+  const norm = s => s.toString().toLowerCase().replace(/[^a-z]/g, '');
+  const map  = {};
+  headerRow.forEach((h, i) => {
+    const n = norm(h);
+    if (n.includes('title'))                           map.title    = i;
+    if (n.includes('address'))                         map.address  = i;
+    if (n.includes('number') || n.includes('phone'))   map.number   = i;
+    if (n.includes('price'))                           map.price    = i;
+    if (n.includes('visited'))                         map.visited  = i;
+    if (n.includes('location'))                        map.location = i;
+    if (n.includes('note'))                            map.notes    = i;
+    if (n.includes('tour'))                            map.tour     = i;
+  });
+  console.log('Header row:', headerRow);
+  console.log('Column map:', map);
+  return map;
+}
+
+// ── HOUSE <-> ROW ─────────────────────────────────────────────────────────────
 function rowToHouse(row, idx) {
-  const g = i => (row[i] != null ? row[i].toString().trim() : '');
+  const g = key => {
+    const i = colMap[key];
+    return (i != null && row[i] != null) ? row[i].toString().trim() : '';
+  };
+  const addr = g('address');
   return {
     id:       idx,
-    title:    g(0),
-    address:  g(1),
-    number:   g(2),
-    price:    g(3),
-    visited:  g(4) || 'No',
-    location: g(5),
-    notes:    g(6),
-    tour:     g(7),
-    lat:      coordsCache[g(1)]?.lat || null,
-    lng:      coordsCache[g(1)]?.lng || null,
+    title:    g('title'),
+    address:  addr,
+    number:   g('number'),
+    price:    g('price'),
+    visited:  g('visited') || 'No',
+    location: g('location'),
+    notes:    g('notes'),
+    tour:     g('tour'),
+    lat:      coordsCache[addr]?.lat || null,
+    lng:      coordsCache[addr]?.lng || null,
   };
 }
 
 function houseToRow(h) {
-  return [h.title, h.address, h.number, h.price, h.visited, h.location, h.notes, h.tour];
+  // Build sparse array matching the sheet's column positions
+  const maxCol = Math.max(...Object.values(colMap));
+  const row = new Array(maxCol + 1).fill('');
+  const set = (key, val) => { if (colMap[key] != null) row[colMap[key]] = val || ''; };
+  set('title',    h.title);
+  set('address',  h.address);
+  set('number',   h.number);
+  set('price',    h.price);
+  set('visited',  h.visited);
+  set('location', h.location);
+  set('notes',    h.notes);
+  set('tour',     h.tour);
+  return row;
 }
 
 // ── GOOGLE SHEET SYNC ─────────────────────────────────────────────────────────
 async function loadSheet() {
   setLoading(true);
   try {
-    const res = await fetch(SCRIPT_URL, { redirect: 'follow' });
-    const rows = await res.json();
-    // rows[0] is the header row — skip it; filter out blank title rows
-    const data = rows.slice(1).filter(r => r[0] && r[0].toString().trim());
-    houses = data.map((r, i) => rowToHouse(r, i + 1));
+    const res  = await fetch(SCRIPT_URL, { redirect: 'follow' });
+    const text = await res.text();
+    console.log('Sheet response (first 400 chars):', text.slice(0, 400));
+
+    let raw;
+    try {
+      raw = JSON.parse(text);
+    } catch (e) {
+      console.error('JSON parse failed. Raw response:', text.slice(0, 600));
+      toast('Bad response — check console', 5000);
+      setLoading(false);
+      return;
+    }
+
+    if (!Array.isArray(raw) || raw.length < 2) {
+      toast(`Sheet returned ${Array.isArray(raw) ? raw.length : 'non-array'} rows`);
+      setLoading(false);
+      return;
+    }
+
+    // Build column map from the header row
+    colMap = buildColMap(raw[0]);
+
+    if (colMap.title == null && colMap.address == null) {
+      toast('Headers not found — check sheet', 5000);
+      console.error('Could not find title/address columns in header:', raw[0]);
+      setLoading(false);
+      return;
+    }
+
+    // Skip header, skip completely empty rows
+    const data = raw.slice(1).filter(r =>
+      Array.isArray(r) && r.some(c => c != null && c.toString().trim() !== '')
+    );
+
+    houses = data
+      .map((r, i) => rowToHouse(r, i + 1))
+      .filter(h => h.title || h.address);
+
+    console.log(`Parsed ${houses.length} houses. First:`, houses[0]);
+
     localStorage.setItem('nadder-cache', JSON.stringify(houses));
     renderAll();
-    toast('Synced ✓');
+    toast(`Synced ✓ — ${houses.length} houses`);
   } catch (e) {
-    console.warn('Sheet load failed, using cache', e);
-    toast('Offline — showing cached data');
+    console.error('loadSheet threw:', e);
+    toast('Fetch failed — using cache', 4000);
   }
   setLoading(false);
 }
@@ -271,8 +338,7 @@ async function loadSheet() {
 async function writeToSheet(action, row) {
   try {
     await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, row })
     });
@@ -282,9 +348,9 @@ async function writeToSheet(action, row) {
 // ── MAP ───────────────────────────────────────────────────────────────────────
 function pinIcon(v) {
   const c = (v === 'Yes' || v === 'Yes (Santi)') ? '#2e7d32' : '#1E7A8A';
-  return L.divIcon({ className: '', html: `<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`, iconSize: [28, 28], iconAnchor: [14, 28] });
+  return L.divIcon({ className: '', iconSize: [28, 28], iconAnchor: [14, 28],
+    html: `<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>` });
 }
-
 function addMarker(h) {
   if (!lmap || !h.lat || !h.lng) return;
   if (markers[h.id]) markers[h.id].remove();
@@ -292,8 +358,8 @@ function addMarker(h) {
   m.on('click', () => showCard(h.id));
   markers[h.id] = m;
 }
-
 async function geo(addr) {
+  if (!addr) return null;
   if (coordsCache[addr]) return coordsCache[addr];
   try {
     const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, { headers: { 'Accept-Language': 'en' } });
@@ -307,10 +373,9 @@ async function geo(addr) {
   } catch (e) {}
   return null;
 }
-
 async function geocodeAll() {
   for (let i = 0; i < houses.length; i++) {
-    if (!houses[i].lat) {
+    if (!houses[i].lat && houses[i].address) {
       await new Promise(r => setTimeout(r, 1100));
       const c = await geo(houses[i].address);
       if (c) { houses[i].lat = c.lat; houses[i].lng = c.lng; }
@@ -318,15 +383,13 @@ async function geocodeAll() {
     addMarker(houses[i]);
   }
 }
-
 function showCard(id) {
   selId = id;
-  const h = houses.find(x => x.id === id);
+  const h = houses.find(x => x.id === id); if (!h) return;
   document.getElementById('bc-title').textContent = h.title;
-  document.getElementById('bc-addr').textContent = h.address;
+  document.getElementById('bc-addr').textContent  = h.address;
   document.getElementById('bcard').classList.add('show');
 }
-
 function initMap() {
   lmap = L.map('leaflet-map', { center: [40.246, -111.648], zoom: 13, zoomControl: false });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(lmap);
@@ -342,147 +405,142 @@ function renderAll() {
   markers = {};
   geocodeAll();
 }
-
 function renderList(q = '') {
-  const q2 = q.toLowerCase();
+  const q2   = q.toLowerCase();
   const rows = houses.filter(h => !q2 || h.title.toLowerCase().includes(q2) || h.address.toLowerCase().includes(q2));
-  document.getElementById('house-list').innerHTML = rows.map(h =>
-    `<div class="hrow" onclick="openDetail(${h.id})"><div class="hrow-body"><div class="hrow-title">${h.title}</div><div class="hrow-addr">${h.address}</div></div><span class="hrow-dots">&#8943;</span></div>`
-  ).join('');
+  document.getElementById('house-list').innerHTML = rows.length
+    ? rows.map(h => `<div class="hrow" onclick="openDetail(${h.id})"><div class="hrow-body"><div class="hrow-title">${h.title||'(no title)'}</div><div class="hrow-addr">${h.address}</div></div><span class="hrow-dots">&#8943;</span></div>`).join('')
+    : '<div style="padding:32px;text-align:center;color:#6b7280">No houses — tap + to add one</div>';
 }
 document.getElementById('search-inp').addEventListener('input', e => renderList(e.target.value));
 
 function parseTour(t) {
   if (!t) return null;
-  const MO = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
-  const m = t.match(/([A-Za-z]+)\s+(\d+)/);
-  if (m) { const mo = MO[m[1].toLowerCase().slice(0, 3)]; if (mo !== undefined) return { month: mo, day: +m[2], year: new Date().getFullYear() }; }
+  const MO = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  const m  = t.match(/([A-Za-z]+)\s+(\d+)/);
+  if (m) { const mo = MO[m[1].toLowerCase().slice(0,3)]; if (mo !== undefined) return {month:mo, day:+m[2], year:new Date().getFullYear()}; }
   return null;
 }
-
 function renderCal() {
   const MN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   document.getElementById('cal-lbl').textContent = `${MN[calMonth]} ${calYear}`;
   const tm = {};
-  houses.forEach(h => { const d = parseTour(h.tour); if (d && d.month === calMonth && d.year === calYear) { if (!tm[d.day]) tm[d.day] = []; tm[d.day].push(h); } });
-  const today = new Date(), fd = new Date(calYear, calMonth, 1).getDay(), dim = new Date(calYear, calMonth + 1, 0).getDate(), pd = new Date(calYear, calMonth, 0).getDate();
-  const total = Math.ceil((fd + dim) / 7) * 7;
-  let html = DN.map(d => `<div class="cal-dh">${d}</div>`).join('');
-  for (let c = 0; c < total; c++) {
-    let num, cls = 'cal-cell', isThis = false;
-    if (c < fd) { num = pd - fd + c + 1; cls += ' other'; }
-    else if (c >= fd + dim) { num = c - fd - dim + 1; cls += ' other'; }
-    else { num = c - fd + 1; isThis = true; }
-    const isT = isThis && today.getDate() === num && today.getMonth() === calMonth && today.getFullYear() === calYear;
-    if (isT) cls += ' today';
-    const evts = isThis && tm[num] ? tm[num].map(h => `<div class="cal-evt" onclick="event.stopPropagation();openDetail(${h.id})">${h.title.slice(0,9)}</div>`).join('') : '';
-    html += `<div class="${cls}"><div class="cal-num">${num}</div>${evts}</div>`;
+  houses.forEach(h => { const d = parseTour(h.tour); if (d && d.month===calMonth && d.year===calYear) { if (!tm[d.day]) tm[d.day]=[]; tm[d.day].push(h); } });
+  const today=new Date(), fd=new Date(calYear,calMonth,1).getDay(), dim=new Date(calYear,calMonth+1,0).getDate(), pd=new Date(calYear,calMonth,0).getDate();
+  const total = Math.ceil((fd+dim)/7)*7;
+  let html = DN.map(d=>`<div class="cal-dh">${d}</div>`).join('');
+  for (let c=0;c<total;c++) {
+    let num,cls='cal-cell',isThis=false;
+    if (c<fd){num=pd-fd+c+1;cls+=' other';}
+    else if(c>=fd+dim){num=c-fd-dim+1;cls+=' other';}
+    else{num=c-fd+1;isThis=true;}
+    if(isThis&&today.getDate()===num&&today.getMonth()===calMonth&&today.getFullYear()===calYear) cls+=' today';
+    const evts=isThis&&tm[num]?tm[num].map(h=>`<div class="cal-evt" onclick="event.stopPropagation();openDetail(${h.id})">${h.title.slice(0,9)}</div>`).join(''):'';
+    html+=`<div class="${cls}"><div class="cal-num">${num}</div>${evts}</div>`;
   }
-  document.getElementById('cal-grid').innerHTML = html;
+  document.getElementById('cal-grid').innerHTML=html;
 }
-function chMonth(d) { calMonth += d; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+function chMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
 
 // ── TAB ───────────────────────────────────────────────────────────────────────
 function goTab(t) {
-  curTab = t;
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('scr-' + t).classList.add('active');
-  document.getElementById('tab-' + t).classList.add('active');
-  const T = { map: 'Map', tour: 'Tour Schedule', book: 'House Book' };
-  document.getElementById('hdr-title').textContent = T[t];
-  const sw = document.getElementById('search-wrap'), ha = document.getElementById('hdr-action');
-  if (t === 'map') { sw.style.display = 'none'; ha.innerHTML = ''; setTimeout(() => lmap && lmap.invalidateSize(), 120); }
-  else if (t === 'tour') { sw.style.display = 'none'; ha.innerHTML = '<button class="add-btn" onclick="loadSheet()">&#8635;</button>'; renderCal(); }
-  else { sw.style.display = 'block'; ha.innerHTML = '<button class="add-btn" onclick="openAdd()">&#65291;</button>'; renderList(); }
+  curTab=t;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('scr-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  const T={map:'Map',tour:'Tour Schedule',book:'House Book'};
+  document.getElementById('hdr-title').textContent=T[t];
+  const sw=document.getElementById('search-wrap'),ha=document.getElementById('hdr-action');
+  if(t==='map'){sw.style.display='none';ha.innerHTML='';setTimeout(()=>lmap&&lmap.invalidateSize(),120);}
+  else if(t==='tour'){sw.style.display='none';ha.innerHTML='<button class="add-btn" onclick="loadSheet()">&#8635;</button>';renderCal();}
+  else{sw.style.display='block';ha.innerHTML='<button class="add-btn" onclick="openAdd()">&#65291;</button>';renderList();}
 }
 
 // ── DETAIL ────────────────────────────────────────────────────────────────────
-function openDetail(id) {
-  const h = houses.find(x => x.id === id); if (!h) return;
-  document.getElementById('det-sh-title').textContent = h.title;
-  const vis = h.visited === 'Yes' || h.visited === 'Yes (Santi)';
-  const rows = [
-    h.number   && ['Number',   h.number],
-    h.price    && ['Price',    h.price],
-    ['Visited?', `<span class="badge ${vis ? 'badge-y' : 'badge-n'}">${vis ? '✓ ' : '✗ '}${h.visited}</span>`],
-    h.location && ['Location', h.location],
-    h.notes    && ['Notes',    `<span style="font-size:13px">${h.notes}</span>`],
-    h.tour     && ['Tour',     h.tour],
+function openDetail(id){
+  const h=houses.find(x=>x.id===id);if(!h)return;
+  document.getElementById('det-sh-title').textContent=h.title;
+  const vis=h.visited==='Yes'||h.visited==='Yes (Santi)';
+  const rows=[
+    h.number  &&['Number',h.number],
+    h.price   &&['Price',h.price],
+    ['Visited?',`<span class="badge ${vis?'badge-y':'badge-n'}">${vis?'✓ ':'✗ '}${h.visited}</span>`],
+    h.location&&['Location',h.location],
+    h.notes   &&['Notes',`<span style="font-size:13px">${h.notes}</span>`],
+    h.tour    &&['Tour',h.tour],
   ].filter(Boolean);
-  document.getElementById('det-body').innerHTML =
-    `<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l, v]) => `<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
+  document.getElementById('det-body').innerHTML=
+    `<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l,v])=>`<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
   openOv('ov-detail');
 }
 
 // ── ADD / EDIT ────────────────────────────────────────────────────────────────
-function openAdd() {
-  document.getElementById('form-lbl').textContent = 'Add House';
-  ['f-id','f-title','f-addr','f-num','f-price','f-loc','f-notes','f-tour'].forEach(i => document.getElementById(i).value = '');
-  document.getElementById('f-vis').value = 'No';
+function openAdd(){
+  document.getElementById('form-lbl').textContent='Add House';
+  ['f-id','f-title','f-addr','f-num','f-price','f-loc','f-notes','f-tour'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-vis').value='No';
   openOv('ov-form');
 }
-
-function openEdit(id) {
-  const h = houses.find(x => x.id === id); if (!h) return;
-  document.getElementById('form-lbl').textContent = 'Edit House';
-  document.getElementById('f-id').value    = h.id;
-  document.getElementById('f-title').value = h.title    || '';
-  document.getElementById('f-addr').value  = h.address  || '';
-  document.getElementById('f-num').value   = h.number   || '';
-  document.getElementById('f-price').value = h.price    || '';
-  document.getElementById('f-vis').value   = h.visited  || 'No';
-  document.getElementById('f-loc').value   = h.location || '';
-  document.getElementById('f-notes').value = h.notes    || '';
-  document.getElementById('f-tour').value  = h.tour     || '';
+function openEdit(id){
+  const h=houses.find(x=>x.id===id);if(!h)return;
+  document.getElementById('form-lbl').textContent='Edit House';
+  document.getElementById('f-id').value=h.id;
+  document.getElementById('f-title').value=h.title||'';
+  document.getElementById('f-addr').value=h.address||'';
+  document.getElementById('f-num').value=h.number||'';
+  document.getElementById('f-price').value=h.price||'';
+  document.getElementById('f-vis').value=h.visited||'No';
+  document.getElementById('f-loc').value=h.location||'';
+  document.getElementById('f-notes').value=h.notes||'';
+  document.getElementById('f-tour').value=h.tour||'';
   openOv('ov-form');
 }
-
-async function saveHouse() {
-  const id = document.getElementById('f-id').value;
-  const h = {
-    title:    document.getElementById('f-title').value,
-    address:  document.getElementById('f-addr').value,
-    number:   document.getElementById('f-num').value,
-    price:    document.getElementById('f-price').value,
-    visited:  document.getElementById('f-vis').value,
-    location: document.getElementById('f-loc').value,
-    notes:    document.getElementById('f-notes').value,
-    tour:     document.getElementById('f-tour').value,
+async function saveHouse(){
+  const id=document.getElementById('f-id').value;
+  const h={
+    title:   document.getElementById('f-title').value,
+    address: document.getElementById('f-addr').value,
+    number:  document.getElementById('f-num').value,
+    price:   document.getElementById('f-price').value,
+    visited: document.getElementById('f-vis').value,
+    location:document.getElementById('f-loc').value,
+    notes:   document.getElementById('f-notes').value,
+    tour:    document.getElementById('f-tour').value,
   };
-  const row = houseToRow(h);
-  if (id) {
-    const idx = houses.findIndex(x => x.id === +id);
-    const addrChanged = houses[idx].address !== h.address;
-    houses[idx] = { ...houses[idx], ...h, lat: addrChanged ? null : houses[idx].lat, lng: addrChanged ? null : houses[idx].lng };
-    localStorage.setItem('nadder-cache', JSON.stringify(houses));
-    await writeToSheet('update', row);
-    if (!houses[idx].lat) { const c = await geo(h.address); if (c) { houses[idx].lat = c.lat; houses[idx].lng = c.lng; } }
+  const row=houseToRow(h);
+  if(id){
+    const idx=houses.findIndex(x=>x.id===+id);
+    const addrChanged=houses[idx].address!==h.address;
+    houses[idx]={...houses[idx],...h,lat:addrChanged?null:houses[idx].lat,lng:addrChanged?null:houses[idx].lng};
+    localStorage.setItem('nadder-cache',JSON.stringify(houses));
+    await writeToSheet('update',row);
+    if(!houses[idx].lat){const c=await geo(h.address);if(c){houses[idx].lat=c.lat;houses[idx].lng=c.lng;}}
     addMarker(houses[idx]);
   } else {
-    const newId = Math.max(0, ...houses.map(x => x.id)) + 1;
-    const newH = { id: newId, lat: null, lng: null, ...h };
+    const newId=Math.max(0,...houses.map(x=>x.id))+1;
+    const newH={id:newId,lat:null,lng:null,...h};
     houses.push(newH);
-    localStorage.setItem('nadder-cache', JSON.stringify(houses));
-    await writeToSheet('add', row);
-    const c = await geo(h.address);
-    if (c) { const i = houses.findIndex(x => x.id === newId); houses[i].lat = c.lat; houses[i].lng = c.lng; addMarker(houses[i]); }
+    localStorage.setItem('nadder-cache',JSON.stringify(houses));
+    await writeToSheet('add',row);
+    const c=await geo(h.address);
+    if(c){const i=houses.findIndex(x=>x.id===newId);houses[i].lat=c.lat;houses[i].lng=c.lng;addMarker(houses[i]);}
   }
   toast('Saved ✓');
-  closeOv('ov-form'); closeOv('ov-detail');
-  if (curTab === 'book') renderList();
-  if (curTab === 'tour') renderCal();
+  closeOv('ov-form');closeOv('ov-detail');
+  if(curTab==='book')renderList();
+  if(curTab==='tour')renderCal();
 }
 
 // ── OVERLAYS ─────────────────────────────────────────────────────────────────
-function openOv(id) { document.getElementById(id).classList.add('open'); }
-function closeOv(id) { document.getElementById(id).classList.remove('open'); }
-['ov-detail', 'ov-form'].forEach(id => document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) closeOv(id); }));
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+['ov-detail','ov-form'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)closeOv(id);}));
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 initMap();
-if (houses.length) { renderAll(); geocodeAll(); }
+if(houses.length){renderAll();geocodeAll();}
 loadSheet();
 </script>
 </body>
