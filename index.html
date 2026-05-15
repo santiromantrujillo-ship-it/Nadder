@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Nadder">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nadder">
   <title>Nadder House Hunt</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <style>
@@ -222,23 +222,24 @@ function setLoading(on) {
   else    { b.className = 'loading-bar done';   d.className = 'sync-dot'; setTimeout(() => b.className = 'loading-bar', 700); }
 }
 
-// ── COLUMN DETECTION ──────────────────────────────────────────────────────────
 function buildColMap(headerRow) {
-  const norm = s => s.toString().toLowerCase().replace(/[^a-z]/g, '');
-  const map  = {};
-  headerRow.forEach((h, i) => {
-    const n = norm(h);
-    if (n.includes('title'))                           map.title    = i;
-    if (n.includes('address'))                         map.address  = i;
-    if (n.includes('number') || n.includes('phone'))   map.number   = i;
-    if (n.includes('price'))                           map.price    = i;
-    if (n.includes('visited'))                         map.visited  = i;
-    if (n.includes('location'))                        map.location = i;
-    if (n.includes('note'))                            map.notes    = i;
-    if (n.includes('tour'))                            map.tour     = i;
-  });
-  console.log('Header row:', headerRow);
-  console.log('Column map:', map);
+  const norm = s => s ? s.toString().toLowerCase().replace(/[^a-z]/g, '') : '';
+  // Default fallback positions (Column A=0, B=1, etc.)
+  const map = { title: 0, address: 1, number: 2, price: 3, visited: 4, location: 5, notes: 6, tour: 7 };
+  
+  if (headerRow && Array.isArray(headerRow)) {
+    headerRow.forEach((h, i) => {
+      const n = norm(h);
+      if (n.includes('title')) map.title = i;
+      else if (n.includes('address')) map.address = i;
+      else if (n.includes('number') || n.includes('phone')) map.number = i;
+      else if (n.includes('price')) map.price = i;
+      else if (n.includes('visited')) map.visited = i;
+      else if (n.includes('location')) map.location = i;
+      else if (n.includes('note')) map.notes = i;
+      else if (n.includes('tour')) map.tour = i;
+    });
+  }
   return map;
 }
 
@@ -265,14 +266,15 @@ function rowToHouse(row, idx) {
 }
 
 function houseToRow(h) {
-  const validIndices = Object.values(colMap).filter(val => val !== undefined && val !== null);
-  const maxCol = validIndices.length > 0 ? Math.max(...validIndices) : 7;
-  const row = new Array(maxCol + 1).fill('');
+  // Ensure we have valid numbers for indices
+  const indices = Object.values(colMap).filter(v => typeof v === 'number');
+  const maxCol = indices.length > 0 ? Math.max(...indices) : 7;
   
+  const row = new Array(maxCol + 1).fill('');
   const set = (key, val) => { 
-    if (colMap[key] !== undefined && colMap[key] !== null) { 
+    if (colMap[key] !== undefined && typeof colMap[key] === 'number') {
       row[colMap[key]] = val || ''; 
-    } 
+    }
   };
   
   set('title',    h.title);
@@ -283,7 +285,6 @@ function houseToRow(h) {
   set('location', h.location);
   set('notes',    h.notes);
   set('tour',     h.tour);
-  
   return row;
 }
 // ── GOOGLE SHEET SYNC ─────────────────────────────────────────────────────────
@@ -504,7 +505,7 @@ function openEdit(id){
   openOv('ov-form');
 }
 
-  async function saveHouse(){
+async function saveHouse(){
   const id = document.getElementById('f-id').value;
   const h = {
     title:    document.getElementById('f-title').value.trim(),
@@ -518,7 +519,7 @@ function openEdit(id){
   };
 
   if (!h.title && !h.address) {
-    toast('⚠️ Title or Address required');
+    toast('⚠️ Please enter a Title or Address');
     return;
   }
 
@@ -532,17 +533,20 @@ function openEdit(id){
       const idx = houses.findIndex(x => x.id === +id);
       houses[idx] = { ...houses[idx], ...h };
       localStorage.setItem('nadder-cache', JSON.stringify(houses));
+      toast('Syncing changes...');
       await writeToSheet('update', row);
     } else {
       const newId = Math.max(0, ...houses.map(x => x.id)) + 1;
       houses.push({ id: newId, ...h });
       localStorage.setItem('nadder-cache', JSON.stringify(houses));
+      toast('Adding to sheet...');
       await writeToSheet('add', row);
     }
     toast('Saved Successfully ✓');
-    loadSheet(); // Refresh data from sheet
-  } catch (error) {
-    toast('❌ Save error');
+    loadSheet(); // Refresh from Google Sheets
+  } catch (err) {
+    console.error(err);
+    toast('❌ Save failed');
   } finally {
     setLoading(false);
     renderAll();
