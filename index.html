@@ -7,72 +7,62 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nadder">
 
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_external.png">
 
   <title>Nadder House Hunt</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <style>
-    :root{--teal:#1E7A8A;--white:#fff;--gray-light:#f5f7f8;--gray:#e2e6e8;--text:#1a1a1a;--muted:#6b7280;--green:#2e7d32;}
+    :root{--teal:#1E7A8A;--white:#fff;--gray-light:#f5f7f8;--gray:#e2e6e8;--text:#1a1a1a;--muted:#6b7280;--dark-blue:#1a2a44;}
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
     html,body{height:100%;overflow:hidden;}
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;background:#fff;display:flex;flex-direction:column;max-width:480px;margin:0 auto;height:100dvh;}
+    
     .header{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));min-height:54px;flex-shrink:0;position:relative;}
     .hdr-title{font-size:18px;font-weight:600;position:absolute;left:50%;transform:translateX(-50%);}
-    .hdr-l{width:36px;}.hdr-r{min-width:36px;display:flex;justify-content:flex-end;}
-    .add-btn{background:#fff;color:var(--teal);border:none;border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
     
-    .screen{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0;}
+    .screen{display:none;flex:1;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;}
     .screen.active{display:flex;}
-    .map-wrap{position:relative;flex:1;min-height:0;}
-    #leaflet-map{width:100%;height:100%;}
     
-    /* CUSTOM LOGO BAR */
-    .logo-bar{background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:15px 0;flex-shrink:0;border-top:1px solid var(--gray);color:var(--teal);}
-    .logo-img{height: 50px; width: auto; margin-bottom: 5px;}
+    .map-container{height: 70vh; width: 100%; position: relative; flex-shrink: 0;}
+    #leaflet-map{width:100%; height:100%;}
+    
+    .logo-bar{background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px 0; border-top:1px solid var(--gray); flex-shrink: 0;}
+    .logo-img{width: 80px; height: auto; object-fit: contain; margin-bottom: 10px;}
+    .logo-text{font-size: 18px; font-weight: 800; color: var(--dark-blue); letter-spacing: 2px;}
 
     .map-fab{position:absolute;top:12px;right:12px;z-index:500;background:#fff;color:var(--teal);border:none;border-radius:22px;padding:9px 16px;font-size:14px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;}
     .bcard{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 24px;box-shadow:0 -4px 24px rgba(0,0,0,.14);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,0,1);z-index:500;cursor:pointer;}
     .bcard.show{transform:translateY(0);}
-    .bc-title{font-size:17px;font-weight:700;color:var(--text);}
-    .bc-addr{font-size:13px;color:var(--muted);margin-top:3px;}
 
-    .list-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-    .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);cursor:pointer;gap:12px;transition:background .12s;}
-    .hrow:active{background:var(--gray-light);}
+    .list-scroll{flex:1;overflow-y:auto;}
+    .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);gap:12px;}
     .hrow-body{flex:1;}
-    .hrow-title{font-size:16px;font-weight:600;color:var(--text);}
-    .hrow-addr{font-size:13px;color:var(--muted);margin-top:2px;}
     
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:flex-end;justify-content:center;}
     .overlay.open{display:flex;}
-    .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(24px,env(safe-area-inset-bottom));}
-    .sh-handle{width:38px;height:4px;background:var(--gray);border-radius:2px;margin:12px auto 0;}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;padding-bottom:max(24px,env(safe-area-inset-bottom));}
     .sh-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--gray);}
-    .sh-title{font-size:17px;font-weight:600;}
-    .sh-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;}
     .sh-body{padding:18px;}
-    .det-title{font-size:22px;font-weight:700;}
-    .det-addr{font-size:14px;color:var(--muted);margin-top:4px;}
-    .det-btn-row{display:flex;gap:10px;margin-top:15px;}
-    .det-edit{flex:1;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;}
-    .det-del{flex:1;background:#ff4444;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;}
-    .det-fields{margin-top:18px;}
-    .det-row{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--gray);gap:16px;}
-    .det-lbl{font-size:15px;color:var(--muted);flex-shrink:0;}
-    .det-val{font-size:14px;color:var(--text);text-align:right;}
     
+    .det-btn-row{display:flex;gap:10px;margin:15px 0;}
+    .det-edit{flex:1;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:600;}
+    .det-del{flex:1;background:#ff4444;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:600;}
+    .det-row{display:flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;}
+    .det-lbl{font-weight: 700; color: var(--muted); font-size: 13px;}
+
     .fg{margin-bottom:16px;}
-    .fl{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px;}
-    .fi,.fta,.fsel{width:100%;padding:11px 13px;border:1.5px solid var(--gray);border-radius:10px;font-size:15px;outline:none;font-family:inherit;}
-    .save-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;}
+    .fl{display:block; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; text-transform:uppercase;}
+    .fi,.fta{width:100%;padding:11px;border:1.5px solid var(--gray);border-radius:10px;font-family:inherit;font-size:15px;}
+    .save-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:15px;font-weight:700;font-size:16px;}
     
-    .tabbar{display:flex;background:#fff;border-top:1px solid var(--gray);flex-shrink:0;padding-bottom:max(0px,env(safe-area-inset-bottom));}
-    .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;gap:3px;border:none;background:none;color:var(--muted);font-size:10px;}
+    .tabbar{display:flex;background:#fff;border-top:1px solid var(--gray);padding-bottom:max(0px,env(safe-area-inset-bottom));}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0;border:none;background:none;color:var(--muted);font-size:10px;}
     .tab.active{color:var(--teal);}
     .tab svg{width:24px;height:24px;}
-    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:9999;}
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-    .loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0%;transition:width .3s;z-index:9999;}
+    
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;z-index:9999;transition: opacity 0.3s;}
+    .toast.show{opacity:1;}
+    .loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0%;z-index:9999;transition: width 0.3s;}
     .loading-bar.active{width:70%;}
     .loading-bar.done{width:100%;opacity:0;}
   </style>
@@ -88,18 +78,18 @@
 </div>
 
 <div class="screen active" id="scr-map">
-  <div class="map-wrap">
+  <div class="map-container">
     <div id="leaflet-map"></div>
     <button class="map-fab" onclick="openAdd()">+ Add House!</button>
     <div class="bcard" id="bcard" onclick="openDetail(selId)">
-      <div class="bc-title" id="bc-title"></div>
-      <div class="bc-addr" id="bc-addr"></div>
+      <div class="bc-title" id="bc-title" style="font-weight:700;"></div>
+      <div class="bc-addr" id="bc-addr" style="font-size:13px; color:var(--muted);"></div>
       <div style="font-size:12px;color:var(--teal);margin-top:8px;">Tap for details →</div>
     </div>
   </div>
   <div class="logo-bar">
-    <img src="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png" class="logo-img" alt="Nadder">
-    <div style="font-size: 16px; font-weight: 700; color: #1a2a44;">NADDER</div>
+    <img src="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png" class="logo-img" alt="Nadder Logo">
+    <div class="logo-text">NADDER</div>
   </div>
 </div>
 
@@ -109,10 +99,9 @@
 
 <div class="overlay" id="ov-detail">
   <div class="sheet">
-    <div class="sh-handle"></div>
     <div class="sh-head">
-      <span class="sh-title">Details</span>
-      <button class="sh-close" onclick="closeOv('ov-detail')">✕</button>
+      <span style="font-weight:700;">House Details</span>
+      <button onclick="closeOv('ov-detail')" style="border:none; background:none; font-size:20px;">✕</button>
     </div>
     <div class="sh-body" id="det-body"></div>
   </div>
@@ -120,23 +109,24 @@
 
 <div class="overlay" id="ov-form">
   <div class="sheet">
-    <div class="sh-handle"></div>
     <div class="sh-head">
-      <span class="sh-title" id="form-lbl">Add House</span>
-      <button class="sh-close" onclick="closeOv('ov-form')">✕</button>
+      <span style="font-weight:700;" id="form-lbl">Add House</span>
+      <button onclick="closeOv('ov-form')" style="border:none; background:none; font-size:20px;">✕</button>
     </div>
     <div class="sh-body">
       <input type="hidden" id="f-id">
       <div class="fg"><label class="fl">Title</label><input class="fi" id="f-title"></div>
       <div class="fg"><label class="fl">Address</label><input class="fi" id="f-addr"></div>
+      <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="f-num" type="tel"></div>
       <div class="fg"><label class="fl">Price</label><input class="fi" id="f-price"></div>
       <div class="fg"><label class="fl">Visited?</label>
-        <select class="fi fsel" id="f-vis">
+        <select class="fi" id="f-vis">
           <option value="No">No</option>
           <option value="Yes">Yes</option>
           <option value="Yes (Santi)">Yes (Santi)</option>
         </select>
       </div>
+      <div class="fg"><label class="fl">Tour Date/Time</label><input class="fi" id="f-tour"></div>
       <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="f-notes"></textarea></div>
       <button class="save-btn" onclick="saveHouse()">Save to Sheet</button>
     </div>
@@ -172,16 +162,13 @@ function setLoading(on) {
   b.className = on ? 'loading-bar active' : 'loading-bar done';
 }
 
-// ── COLOR CODED PINS WITH LOGO ──
-function pinIcon(visited) {
-  const color = (visited === 'Yes' || visited === 'Yes (Santi)') ? '#2e7d32' : '#1E7A8A';
+function pinIcon(v) {
+  const c = (v === 'Yes' || v === 'Yes (Santi)') ? '#2e7d32' : '#1E7A8A';
   return L.divIcon({
-    className: 'custom-pin',
-    iconSize: [36, 36],
-    iconAnchor: [18, 36],
-    html: `<div style="width:36px;height:36px;background:${color};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;">
-             <div style="width:18px;height:18px;background:url('https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png') no-repeat center;background-size:contain;transform:rotate(45deg);"></div>
-           </div>`
+    className: '',
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    html: `<div style="width:28px;height:28px;background:${c};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>`
   });
 }
 
@@ -191,8 +178,15 @@ async function loadSheet() {
     const res = await fetch(SCRIPT_URL);
     const raw = await res.json();
     houses = raw.slice(1).map((r, i) => ({
-      id: i + 1, title: r[0], address: r[1], visited: r[4] || 'No', price: r[3] || '', notes: r[6] || ''
-    })).filter(h => h.title);
+      id: i + 1, 
+      title: r[0] || '', 
+      address: r[1] || '', 
+      number: r[2] || '',
+      price: r[3] || '', 
+      visited: r[4] || 'No', 
+      notes: r[6] || '',
+      tour: r[7] || ''
+    })).filter(h => h.title || h.address);
     renderAll();
   } catch (e) { toast('Sync error'); }
   setLoading(false);
@@ -221,10 +215,10 @@ function renderAll() {
 
 function renderList() {
   document.getElementById('house-list').innerHTML = houses.map(h => `
-    <div class="hrow" onclick="openDetail(${h.id})">
+    <div class="hrow" onclick="openDetail(${h.id})" style="padding:15px; border-bottom:1px solid #eee;">
       <div class="hrow-body">
-        <div class="hrow-title">${h.title}</div>
-        <div class="hrow-addr">${h.address}</div>
+        <div style="font-weight:700;">${h.title || 'Untitled'}</div>
+        <div style="font-size:13px; color:var(--muted);">${h.address}</div>
       </div>
     </div>`).join('');
 }
@@ -233,41 +227,54 @@ function openDetail(id) {
   const h = houses.find(x => x.id === id);
   const isVis = h.visited === 'Yes' || h.visited === 'Yes (Santi)';
   document.getElementById('det-body').innerHTML = `
-    <div class="det-title">${h.title}</div>
-    <div class="det-addr">${h.address}</div>
+    <div style="font-size:22px; font-weight:700;">${h.title}</div>
+    <div style="color:var(--muted); margin-bottom:10px;">${h.address}</div>
+    
     <div class="det-btn-row">
       <button class="det-edit" onclick="openEdit(${h.id})">✎ Edit</button>
       <button class="det-del" onclick="deleteHouse(${h.id})">🗑 Delete</button>
     </div>
-    <div class="det-fields">
-      <div class="det-row"><span class="det-lbl">Price</span><span>${h.price}</span></div>
-      <div class="det-row"><span class="det-lbl">Visited?</span><span style="color:${isVis?'#2e7d32':'#c62828'}">${h.visited}</span></div>
-      <div class="det-row"><span class="det-lbl">Notes</span><span>${h.notes}</span></div>
+
+    <div style="margin-top:15px; border-top:1px solid #eee;">
+      <div class="det-row"><span class="det-lbl">PHONE</span><span>${h.number || '-'}</span></div>
+      <div class="det-row"><span class="det-lbl">PRICE</span><span>${h.price || '-'}</span></div>
+      <div class="det-row"><span class="det-lbl">TOUR DATE</span><span>${h.tour || '-'}</span></div>
+      <div class="det-row"><span class="det-lbl">VISITED</span><span style="color:${isVis?'#2e7d32':'#c62828'}">${h.visited}</span></div>
+      <div style="margin-top:15px;">
+        <span class="det-lbl">NOTES</span>
+        <div style="font-size:14px; margin-top:5px; line-height:1.4;">${h.notes || 'No notes.'}</div>
+      </div>
     </div>`;
   openOv('ov-detail');
 }
 
 async function saveHouse() {
   const id = document.getElementById('f-id').value;
+  // Row order: Title, Address, Phone, Price, Visited, Location, Notes, Tour
   const h = [
-    document.getElementById('f-title').value, 
-    document.getElementById('f-addr').value, 
-    "", 
-    document.getElementById('f-price').value, 
+    document.getElementById('f-title').value.trim(), 
+    document.getElementById('f-addr').value.trim(), 
+    document.getElementById('f-num').value.trim(), 
+    document.getElementById('f-price').value.trim(), 
     document.getElementById('f-vis').value, 
     "", 
-    document.getElementById('f-notes').value
+    document.getElementById('f-notes').value.trim(),
+    document.getElementById('f-tour').value.trim()
   ];
+  
   setLoading(true);
   try {
     await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: id ? 'update' : 'add', row: h }) });
-    toast('Saved!'); closeOv('ov-form'); loadSheet();
-  } catch (e) { toast('Error'); }
+    toast('Saved to Sheet!'); 
+    closeOv('ov-form'); 
+    closeOv('ov-detail');
+    loadSheet();
+  } catch (e) { toast('Error saving'); }
   setLoading(false);
 }
 
 async function deleteHouse(id) {
-  if(!confirm("Delete?")) return;
+  if(!confirm("Delete this house?")) return;
   const h = houses.find(x => x.id === id);
   setLoading(true);
   try {
@@ -282,25 +289,33 @@ function goTab(t) {
   document.getElementById('scr-'+t).classList.add('active');
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
+  const T = {map:'Map', book:'House Book'};
+  document.getElementById('hdr-title').textContent = T[t];
   if(t==='map') setTimeout(() => lmap.invalidateSize(), 100);
 }
 
 function openAdd() { 
   document.getElementById('f-id').value = ''; 
-  ['f-title','f-addr','f-price','f-notes'].forEach(k=>document.getElementById(k).value='');
+  ['f-title','f-addr','f-num','f-price','f-tour','f-notes'].forEach(k=>document.getElementById(k).value='');
   document.getElementById('f-vis').value='No';
+  document.getElementById('form-lbl').textContent = 'Add House';
   openOv('ov-form'); 
 }
+
 function openEdit(id) { 
   const h = houses.find(x => x.id === id);
   document.getElementById('f-id').value = h.id;
   document.getElementById('f-title').value = h.title;
   document.getElementById('f-addr').value = h.address;
+  document.getElementById('f-num').value = h.number;
   document.getElementById('f-price').value = h.price;
   document.getElementById('f-vis').value = h.visited;
+  document.getElementById('f-tour').value = h.tour;
   document.getElementById('f-notes').value = h.notes;
+  document.getElementById('form-lbl').textContent = 'Edit House';
   openOv('ov-form');
 }
+
 function openOv(id) { document.getElementById(id).classList.add('open'); }
 function closeOv(id) { document.getElementById(id).classList.remove('open'); }
 function showCard(id) { selId = id; const h = houses.find(x => x.id === id); document.getElementById('bc-title').textContent = h.title; document.getElementById('bc-addr').textContent = h.address; document.getElementById('bcard').classList.add('show'); }
