@@ -23,20 +23,23 @@
     .screen{display:none;flex:1;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;}
     .screen.active{display:flex;}
     
-    .map-container{height: 75vh; width: 100%; position: relative; flex-shrink: 0;}
-    #leaflet-map{width:100%; height:100%;}
+    .map-container{height: 70vh; width: 100%; position: relative; flex-shrink: 0;}
+    #leaflet-map{width:100%; height:100%; z-index: 1;}
     
-    .logo-bar{background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 0; border-top:1px solid var(--gray); flex-shrink: 0;}
-    .logo-img{width: 90px; height: auto; object-fit: contain; margin-bottom: 10px;}
-    .logo-text{font-size: 18px; font-weight: 800; color: var(--dark-blue); letter-spacing: 2px;}
+    /* UPDATED LOGO BAR: Bigger image, no duplicate text */
+    .logo-bar{background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 0 40px; border-top:1px solid var(--gray); flex-shrink: 0;}
+    .logo-img{width: 180px; height: auto; object-fit: contain;}
 
     .map-fab{position:absolute;top:12px;right:12px;z-index:500;background:#fff;color:var(--teal);border:none;border-radius:22px;padding:9px 16px;font-size:14px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.2);cursor:pointer;}
     .bcard{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 24px;box-shadow:0 -4px 24px rgba(0,0,0,.14);transform:translateY(110%);transition:transform .32s cubic-bezier(.32,.72,0,1);z-index:500;cursor:pointer;}
     .bcard.show{transform:translateY(0);}
 
+    .cal-scroll{padding:16px; flex:1;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:10px;}
+    .cal-cell{min-height:60px;border:1px solid var(--gray);padding:4px;background:#fff;font-size:10px;}
+    .cal-evt{background:var(--teal);color:#fff;font-size:8px;padding:2px;margin-top:2px;border-radius:2px;overflow:hidden;}
+
     .list-scroll{flex:1;overflow-y:auto;}
-    .hrow{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray);gap:12px;}
-    
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:flex-end;justify-content:center;}
     .overlay.open{display:flex;}
     .sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;padding-bottom:max(24px,env(safe-area-inset-bottom));}
@@ -47,19 +50,19 @@
     .det-edit{flex:1;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:600;}
     .det-del{flex:1;background:#ff4444;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:600;}
     .det-row{display:flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;}
-    .det-lbl{font-weight: 700; color: var(--muted); font-size: 13px;}
+    .det-lbl{font-weight: 700; color: var(--muted); font-size: 12px; text-transform: uppercase;}
 
     .fg{margin-bottom:16px;}
-    .fl{display:block; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; text-transform:uppercase;}
+    .fl{display:block; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px; text-transform:uppercase;}
     .fi,.fta{width:100%;padding:11px;border:1.5px solid var(--gray);border-radius:10px;font-family:inherit;font-size:15px;}
     .save-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:15px;font-weight:700;font-size:16px;}
     
     .tabbar{display:flex;background:#fff;border-top:1px solid var(--gray);padding-bottom:max(0px,env(safe-area-inset-bottom));}
     .tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0;border:none;background:none;color:var(--muted);font-size:10px;}
     .tab.active{color:var(--teal);}
-    .tab svg{width:24px;height:24px;}
+    .tab svg{width:22px;height:22px;}
     
-    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;z-index:9999;transition: opacity 0.3s;}
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;z-index:9999;transition: opacity 0.3s; pointer-events: none;}
     .toast.show{opacity:1;}
     .loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--teal);width:0%;z-index:9999;transition: width 0.3s;}
     .loading-bar.active{width:70%;}
@@ -87,8 +90,20 @@
     </div>
   </div>
   <div class="logo-bar">
-    <img src="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png" class="logo-img" alt="Nadder Internal Logo">
-    <div class="logo-text">NADDER</div>
+    <img src="https://raw.githubusercontent.com/santiromantrujillo-ship-it/Nadder/refs/heads/main/Nadder_internal.png" class="logo-img" alt="Nadder">
+  </div>
+</div>
+
+<div class="screen" id="scr-tour">
+  <div class="cal-scroll">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 id="cal-mo-lbl">Month</h2>
+        <div>
+            <button onclick="changeMo(-1)" style="padding:5px 10px;">‹</button>
+            <button onclick="changeMo(1)" style="padding:5px 10px;">›</button>
+        </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
   </div>
 </div>
 
@@ -116,7 +131,7 @@
       <input type="hidden" id="f-id">
       <div class="fg"><label class="fl">Title</label><input class="fi" id="f-title"></div>
       <div class="fg"><label class="fl">Address</label><input class="fi" id="f-addr"></div>
-      <div class="fg"><label class="fl">Phone Number</label><input class="fi" id="f-num" type="tel"></div>
+      <div class="fg"><label class="fl">Phone</label><input class="fi" id="f-num"></div>
       <div class="fg"><label class="fl">Price</label><input class="fi" id="f-price"></div>
       <div class="fg"><label class="fl">Visited?</label>
         <select class="fi" id="f-vis">
@@ -125,7 +140,7 @@
           <option value="Yes (Santi)">Yes (Santi)</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">Tour Date/Time</label><input class="fi" id="f-tour"></div>
+      <div class="fg"><label class="fl">Tour Date (e.g. May 15)</label><input class="fi" id="f-tour"></div>
       <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="f-notes"></textarea></div>
       <button class="save-btn" onclick="saveHouse()">Save to Sheet</button>
     </div>
@@ -137,9 +152,13 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
     <span>Map</span>
   </button>
+  <button class="tab" id="tab-tour" onclick="goTab('tour')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Tours</span>
+  </button>
   <button class="tab" id="tab-book" onclick="goTab('book')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>House Book</span>
+    <span>Book</span>
   </button>
 </div>
 
@@ -149,6 +168,8 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJPuxeEPM3wAkcicHoY
 
 let houses = [];
 let lmap, markers = {}, selId = null;
+let coordsCache = JSON.parse(localStorage.getItem('nadder-coords') || '{}');
+let viewMo = new Date().getMonth(), viewYr = new Date().getFullYear();
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -191,36 +212,36 @@ async function loadSheet() {
   setLoading(false);
 }
 
-// ── FIXED CORS GEOCODING ──
 async function geo(h) {
-  if (h.lat) return;
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(h.address)}&limit=1`;
-  
-  try {
-    // Adding a user-agent style header via params to help bypass basic blocks
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('CORS or Network issue');
-    const d = await r.json();
-    
-    if (d[0]) {
-      h.lat = d[0].lat; h.lng = d[0].lon;
-      const m = L.marker([h.lat, h.lng], {icon: pinIcon(h.visited)}).addTo(lmap);
-      m.on('click', () => showCard(h.id));
-      markers[h.id] = m;
-    }
-  } catch (e) {
-    console.warn("Geocoding failed for:", h.address, e);
+  if (coordsCache[h.address]) {
+    h.lat = coordsCache[h.address].lat;
+    h.lng = coordsCache[h.address].lng;
+    placeMarker(h);
+    return;
   }
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(h.address)}&limit=1`);
+    const d = await r.json();
+    if (d && d[0]) {
+      h.lat = d[0].lat; h.lng = d[0].lon;
+      coordsCache[h.address] = { lat: h.lat, lng: h.lng };
+      localStorage.setItem('nadder-coords', JSON.stringify(coordsCache));
+      placeMarker(h);
+    }
+  } catch (e) {}
+}
+
+function placeMarker(h) {
+  if (markers[h.id]) markers[h.id].remove();
+  const m = L.marker([h.lat, h.lng], {icon: pinIcon(h.visited)}).addTo(lmap);
+  m.on('click', () => showCard(h.id));
+  markers[h.id] = m;
 }
 
 function renderAll() {
   renderList();
-  Object.values(markers).forEach(m => m.remove());
-  markers = {};
-  houses.forEach((h, i) => {
-    // Stagger geocoding requests to respect Nominatim rate limits
-    setTimeout(() => geo(h), i * 1200);
-  });
+  renderCal();
+  houses.forEach((h, i) => { setTimeout(() => geo(h), i * 1500); });
 }
 
 function renderList() {
@@ -233,27 +254,46 @@ function renderList() {
     </div>`).join('');
 }
 
+function renderCal() {
+    const MN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById('cal-mo-lbl').textContent = MN[viewMo] + " " + viewYr;
+    
+    const daysInMo = new Date(viewYr, viewMo + 1, 0).getDate();
+    const startDay = new Date(viewYr, viewMo, 1).getDay();
+    
+    let html = "";
+    for(let i=0; i<startDay; i++) html += '<div class="cal-cell" style="background:#f9f9f9"></div>';
+    
+    for(let d=1; d<=daysInMo; d++) {
+        const tours = houses.filter(h => {
+            if(!h.tour) return false;
+            const tStr = h.tour.toLowerCase();
+            return tStr.includes(MN[viewMo].toLowerCase()) && tStr.includes(d.toString());
+        });
+        const tourHtml = tours.map(t => `<div class="cal-evt" onclick="event.stopPropagation();openDetail(${t.id})">${t.title.substring(0,8)}</div>`).join('');
+        html += `<div class="cal-cell"><b>${d}</b>${tourHtml}</div>`;
+    }
+    document.getElementById('cal-grid').innerHTML = html;
+}
+
+function changeMo(dir) { viewMo += dir; if(viewMo<0){viewMo=11; viewYr--;} if(viewMo>11){viewMo=0; viewYr++;} renderCal(); }
+
 function openDetail(id) {
   const h = houses.find(x => x.id === id);
   const isVis = h.visited === 'Yes' || h.visited === 'Yes (Santi)';
   document.getElementById('det-body').innerHTML = `
     <div style="font-size:22px; font-weight:700;">${h.title}</div>
     <div style="color:var(--muted); margin-bottom:10px;">${h.address}</div>
-    
     <div class="det-btn-row">
       <button class="det-edit" onclick="openEdit(${h.id})">✎ Edit</button>
       <button class="det-del" onclick="deleteHouse(${h.id})">🗑 Delete</button>
     </div>
-
     <div style="margin-top:15px; border-top:1px solid #eee;">
       <div class="det-row"><span class="det-lbl">PHONE</span><span>${h.number || '-'}</span></div>
       <div class="det-row"><span class="det-lbl">PRICE</span><span>${h.price || '-'}</span></div>
       <div class="det-row"><span class="det-lbl">TOUR DATE</span><span>${h.tour || '-'}</span></div>
       <div class="det-row"><span class="det-lbl">VISITED</span><span style="color:${isVis?'#2e7d32':'#c62828'}">${h.visited}</span></div>
-      <div style="margin-top:15px;">
-        <span class="det-lbl">NOTES</span>
-        <div style="font-size:14px; margin-top:5px; line-height:1.4;">${h.notes || 'No notes.'}</div>
-      </div>
+      <div style="margin-top:15px;"><span class="det-lbl">NOTES</span><div style="font-size:14px; margin-top:5px;">${h.notes || 'No notes.'}</div></div>
     </div>`;
   openOv('ov-detail');
 }
@@ -261,23 +301,15 @@ function openDetail(id) {
 async function saveHouse() {
   const id = document.getElementById('f-id').value;
   const h = [
-    document.getElementById('f-title').value.trim(), 
-    document.getElementById('f-addr').value.trim(), 
-    document.getElementById('f-num').value.trim(), 
-    document.getElementById('f-price').value.trim(), 
-    document.getElementById('f-vis').value, 
-    "", 
-    document.getElementById('f-notes').value.trim(),
-    document.getElementById('f-tour').value.trim()
+    document.getElementById('f-title').value.trim(), document.getElementById('f-addr').value.trim(), 
+    document.getElementById('f-num').value.trim(), document.getElementById('f-price').value.trim(), 
+    document.getElementById('f-vis').value, "", 
+    document.getElementById('f-notes').value.trim(), document.getElementById('f-tour').value.trim()
   ];
-  
   setLoading(true);
   try {
     await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: id ? 'update' : 'add', row: h }) });
-    toast('Saved to Sheet!'); 
-    closeOv('ov-form'); 
-    closeOv('ov-detail');
-    loadSheet();
+    toast('Saved!'); closeOv('ov-form'); closeOv('ov-detail'); loadSheet();
   } catch (e) { toast('Error saving'); }
   setLoading(false);
 }
@@ -298,16 +330,16 @@ function goTab(t) {
   document.getElementById('scr-'+t).classList.add('active');
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
-  const T = {map:'Map', book:'House Book'};
+  const T = {map:'Map', tour: 'Tour Schedule', book:'House Book'};
   document.getElementById('hdr-title').textContent = T[t];
   if(t==='map') setTimeout(() => lmap.invalidateSize(), 100);
+  if(t==='tour') renderCal();
 }
 
 function openAdd() { 
   document.getElementById('f-id').value = ''; 
   ['f-title','f-addr','f-num','f-price','f-tour','f-notes'].forEach(k=>document.getElementById(k).value='');
   document.getElementById('f-vis').value='No';
-  document.getElementById('form-lbl').textContent = 'Add House';
   openOv('ov-form'); 
 }
 
@@ -321,7 +353,6 @@ function openEdit(id) {
   document.getElementById('f-vis').value = h.visited;
   document.getElementById('f-tour').value = h.tour;
   document.getElementById('f-notes').value = h.notes;
-  document.getElementById('form-lbl').textContent = 'Edit House';
   openOv('ov-form');
 }
 
