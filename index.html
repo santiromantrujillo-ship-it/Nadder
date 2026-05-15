@@ -478,8 +478,19 @@ function openDetail(id){
     h.notes   &&['Notes',`<span style="font-size:13px">${h.notes}</span>`],
     h.tour    &&['Tour',h.tour],
   ].filter(Boolean);
-  document.getElementById('det-body').innerHTML=
-    `<div class="det-title">${h.title}</div><div class="det-addr">${h.address}</div><button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button><div class="det-fields">${rows.map(([l,v])=>`<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}</div>`;
+document.getElementById('det-body').innerHTML = `
+    <div class="det-title">${h.title}</div>
+    <div class="det-addr">${h.address}</div>
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <button class="det-edit" onclick="openEdit(${h.id})">&#9998; Edit</button>
+      <button class="det-edit" onclick="deleteCurrentHouse(${h.id})" style="background: #ff4444;">🗑 Delete</button>
+    </div>
+
+    <div class="det-fields">
+      ${rows.map(([l,v])=>`<div class="det-row"><span class="det-lbl">${l}</span><span class="det-val">${v}</span></div>`).join('')}
+    </div>
+  `;
   openOv('ov-detail');
 }
 
