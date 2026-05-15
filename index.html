@@ -265,10 +265,16 @@ function rowToHouse(row, idx) {
 }
 
 function houseToRow(h) {
-  // Build sparse array matching the sheet's column positions
-  const maxCol = Math.max(...Object.values(colMap));
+  const validIndices = Object.values(colMap).filter(val => val !== undefined && val !== null);
+  const maxCol = validIndices.length > 0 ? Math.max(...validIndices) : 7;
   const row = new Array(maxCol + 1).fill('');
-  const set = (key, val) => { if (colMap[key] != null) row[colMap[key]] = val || ''; };
+  
+  const set = (key, val) => { 
+    if (colMap[key] !== undefined && colMap[key] !== null) { 
+      row[colMap[key]] = val || ''; 
+    } 
+  };
+  
   set('title',    h.title);
   set('address',  h.address);
   set('number',   h.number);
@@ -277,9 +283,9 @@ function houseToRow(h) {
   set('location', h.location);
   set('notes',    h.notes);
   set('tour',     h.tour);
+  
   return row;
 }
-
 // ── GOOGLE SHEET SYNC ─────────────────────────────────────────────────────────
 async function loadSheet() {
   setLoading(true);
@@ -497,40 +503,50 @@ function openEdit(id){
   document.getElementById('f-tour').value=h.tour||'';
   openOv('ov-form');
 }
-async function saveHouse(){
-  const id=document.getElementById('f-id').value;
-  const h={
-    title:   document.getElementById('f-title').value,
-    address: document.getElementById('f-addr').value,
-    number:  document.getElementById('f-num').value,
-    price:   document.getElementById('f-price').value,
-    visited: document.getElementById('f-vis').value,
-    location:document.getElementById('f-loc').value,
-    notes:   document.getElementById('f-notes').value,
-    tour:    document.getElementById('f-tour').value,
+
+  async function saveHouse(){
+  const id = document.getElementById('f-id').value;
+  const h = {
+    title:    document.getElementById('f-title').value.trim(),
+    address:  document.getElementById('f-addr').value.trim(),
+    number:   document.getElementById('f-num').value.trim(),
+    price:    document.getElementById('f-price').value.trim(),
+    visited:  document.getElementById('f-vis').value,
+    location: document.getElementById('f-loc').value.trim(),
+    notes:    document.getElementById('f-notes').value.trim(),
+    tour:     document.getElementById('f-tour').value.trim(),
   };
-  const row=houseToRow(h);
-  if(id){
-    const idx=houses.findIndex(x=>x.id===+id);
-    const addrChanged=houses[idx].address!==h.address;
-    houses[idx]={...houses[idx],...h,lat:addrChanged?null:houses[idx].lat,lng:addrChanged?null:houses[idx].lng};
-    localStorage.setItem('nadder-cache',JSON.stringify(houses));
-    await writeToSheet('update',row);
-    if(!houses[idx].lat){const c=await geo(h.address);if(c){houses[idx].lat=c.lat;houses[idx].lng=c.lng;}}
-    addMarker(houses[idx]);
-  } else {
-    const newId=Math.max(0,...houses.map(x=>x.id))+1;
-    const newH={id:newId,lat:null,lng:null,...h};
-    houses.push(newH);
-    localStorage.setItem('nadder-cache',JSON.stringify(houses));
-    await writeToSheet('add',row);
-    const c=await geo(h.address);
-    if(c){const i=houses.findIndex(x=>x.id===newId);houses[i].lat=c.lat;houses[i].lng=c.lng;addMarker(houses[i]);}
+
+  if (!h.title && !h.address) {
+    toast('⚠️ Title or Address required');
+    return;
   }
-  toast('Saved ✓');
-  closeOv('ov-form');closeOv('ov-detail');
-  if(curTab==='book')renderList();
-  if(curTab==='tour')renderCal();
+
+  const row = houseToRow(h);
+  setLoading(true);
+  closeOv('ov-form');
+  closeOv('ov-detail');
+
+  try {
+    if(id){
+      const idx = houses.findIndex(x => x.id === +id);
+      houses[idx] = { ...houses[idx], ...h };
+      localStorage.setItem('nadder-cache', JSON.stringify(houses));
+      await writeToSheet('update', row);
+    } else {
+      const newId = Math.max(0, ...houses.map(x => x.id)) + 1;
+      houses.push({ id: newId, ...h });
+      localStorage.setItem('nadder-cache', JSON.stringify(houses));
+      await writeToSheet('add', row);
+    }
+    toast('Saved Successfully ✓');
+    loadSheet(); // Refresh data from sheet
+  } catch (error) {
+    toast('❌ Save error');
+  } finally {
+    setLoading(false);
+    renderAll();
+  }
 }
 
 // ── OVERLAYS ─────────────────────────────────────────────────────────────────
